@@ -12,7 +12,7 @@ struct KeychainStore: KeychainStoring {
     }
     
     func retrieveAuthState() -> OIDAuthStateWrapping? {
-        strongbox.unarchive(objectForKey: authStateKey) as? OIDAuthState
+        strongbox.unarchive(objectForKey: authStateKey) as? OIDAuthStateWrapping
     }
     
     func storeAuthState(_ authState: OIDAuthStateWrapping) {

@@ -30,9 +30,6 @@ let package = Package(
                 .product(name: "Strongbox", package: "Strongbox")
             ],
             path: "Sources"
-        ),
-        .testTarget(
-            name: "ContentPassTests",
-            dependencies: ["ContentPass"]),
+        )
     ]
 )

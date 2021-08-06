@@ -43,12 +43,21 @@ final class KeychainStoreTests: XCTestCase {
     }
     
     func testStoredAuthStateIsRetrievable() {
-        let store = KeychainStore(clientId: "")
+        let store = KeychainStore(clientId: "some.client.id")
         store.storeAuthState(dummyAuthState1)
-        let result = store.retrieveAuthState() as? MockedAuthState
+        let result = store.retrieveAuthState()
+        
         XCTAssertNotNil(result)
-        
-        
-        XCTAssertEqual(result, dummyAuthState1)
+        XCTAssertEqual(result?.accessToken, dummyAuthState1.accessToken)
+        XCTAssertEqual(result as! MockedAuthState, dummyAuthState1)
+    }
+    
+    func testDeleteAuthState() {
+        let store = KeychainStore(clientId: "some.client.id")
+        store.storeAuthState(dummyAuthState1)
+    
+        XCTAssertNotNil(store.retrieveAuthState())
+        store.deleteAuthState()
+        XCTAssertNil(store.retrieveAuthState())
     }
 }

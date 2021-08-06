@@ -1,6 +1,6 @@
 import AppAuth
 
-protocol OIDAuthStateWrapping {
+protocol OIDAuthStateWrapping: NSSecureCoding {
     var isAuthorized: Bool { get }
     var accessToken: String? { get }
     var accessTokenExpirationDate: Date? { get }
