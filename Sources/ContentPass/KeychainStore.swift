@@ -3,22 +3,23 @@ import Strongbox
 
 struct KeychainStore: KeychainStoring {
     private let strongbox: Strongbox
+    let keyPrefix: String
     private let authStateKey = "OIDAuthState"
     
     init(clientId: String) {
-        strongbox = Strongbox(keyPrefix: "de.contentpass.\(clientId)")
+        keyPrefix = "de.contentpass.\(clientId)"
+        strongbox = Strongbox(keyPrefix: keyPrefix)
     }
     
-    func retrieveAuthState() -> OIDAuthState? {
+    func retrieveAuthState() -> OIDAuthStateWrapping? {
         strongbox.unarchive(objectForKey: authStateKey) as? OIDAuthState
     }
     
-    func storeAuthState(_ authState: OIDAuthState) {
+    func storeAuthState(_ authState: OIDAuthStateWrapping) {
         strongbox.archive(authState, key: authStateKey)
     }
     
     func deleteAuthState() {
         strongbox.remove(key: authStateKey)
     }
-    
 }

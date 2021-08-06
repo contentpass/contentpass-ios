@@ -17,7 +17,9 @@ public class ContentPass: NSObject {
     private let clientRedirectUri = URL(string: "de.t-online.pur://oauth")!
     private let discoveryUrl = URL(string: "https://pur.t-online.de")!
     
-    private var oidAuthState: OIDAuthState? { didSet { didSetAuthState(oidAuthState) } }
+    private var oidAuthState: OIDAuthStateWrapping? {
+        didSet { didSetAuthState(oidAuthState) }
+    }
     private let keychain: KeychainStoring
     private let authorizer: Authorizing
     
@@ -59,8 +61,7 @@ public class ContentPass: NSObject {
     private func validateAuthState() {
         guard
             let authState = oidAuthState,
-            let lastToken = authState.lastTokenResponse,
-            let validUntil = lastToken.accessTokenExpirationDate
+            let validUntil = authState.accessTokenExpirationDate
         else {
             state = .unauthorized
             return
@@ -94,8 +95,7 @@ public class ContentPass: NSObject {
             state = .unauthorized
             return
         }
-        // no completion handling needed because we implement the delegates
-        authState.performAction(freshTokens: { _, _, _ in } )
+        authState.performTokenRefresh()
     }
     
     public func authorize(presentingViewController: UIViewController, completionHandler: @escaping (Result<Void, Error>) -> Void) {
@@ -113,7 +113,7 @@ public class ContentPass: NSObject {
         delegate?.onStateChanged(contentPass: self, newState: state)
     }
     
-    private func didSetAuthState(_ authState: OIDAuthState?) {
+    private func didSetAuthState(_ authState: OIDAuthStateWrapping?) {
         oidAuthState?.errorDelegate = self
         oidAuthState?.stateChangeDelegate = self
     }
@@ -127,12 +127,16 @@ extension ContentPass: OIDAuthStateErrorDelegate {
 
 extension ContentPass: OIDAuthStateChangeDelegate {
     public func didChange(_ state: OIDAuthState) {
-        print("state changed: \(state.lastTokenResponse?.accessToken ?? "no access token")")
-        if state.isAuthorized {
+        didChange(wrappedState: state)
+    }
+    
+    func didChange(wrappedState: OIDAuthStateWrapping) {
+        print("state changed: \(wrappedState.accessToken ?? "no access token")")
+        if wrappedState.isAuthorized {
             self.state = .authorized
-            guard let refreshDelay = state.lastTokenResponse?.accessTokenExpirationDate?.timeIntervalSinceNow else { return }
+            guard let refreshDelay = wrappedState.accessTokenExpirationDate?.timeIntervalSinceNow else { return }
             setRefreshTimer(delay: refreshDelay)
-            keychain.storeAuthState(state)
+            keychain.storeAuthState(wrappedState)
         } else {
             self.state = .unauthorized
             keychain.deleteAuthState()

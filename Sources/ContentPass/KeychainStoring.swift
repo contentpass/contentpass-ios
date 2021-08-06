@@ -1,7 +1,7 @@
 import AppAuth
 
 protocol KeychainStoring {
-    func retrieveAuthState() -> OIDAuthState?
-    func storeAuthState(_ token: OIDAuthState)
+    func retrieveAuthState() -> OIDAuthStateWrapping?
+    func storeAuthState(_ token: OIDAuthStateWrapping)
     func deleteAuthState()
 }
