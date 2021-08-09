@@ -30,7 +30,7 @@ class Authorizer: Authorizing {
         client.discoverConfiguration(forIssuer: discoveryUrl, completionHandler: completionHandler)
     }
     
-    func authorize(presentingViewController: UIViewController, completionHandler: @escaping (Result<OIDAuthState, Error>) -> Void) {
+    func authorize(presentingViewController: UIViewController, completionHandler: @escaping (Result<OIDAuthStateWrapping, Error>) -> Void) {
         if oidServiceConfiguration != nil {
             doAuthorization(presentingViewController: presentingViewController, completionHandler: completionHandler)
         } else {
@@ -63,7 +63,7 @@ class Authorizer: Authorizing {
         )
     }
     
-    private func doAuthorization(presentingViewController: UIViewController, completionHandler: @escaping (Result<OIDAuthState, Error>) -> Void) {
+    private func doAuthorization(presentingViewController: UIViewController, completionHandler: @escaping (Result<OIDAuthStateWrapping, Error>) -> Void) {
         do {
             let request = try createAuthorizationRequest()
             client.doAuthorization(

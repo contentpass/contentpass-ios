@@ -7,7 +7,7 @@ struct OIDClientWrapper: OIDClientWrapping {
         OIDAuthorizationService.discoverConfiguration(forIssuer: forIssuer, completion: completionHandler)
     }
     
-    mutating func doAuthorization(byPresenting: OIDAuthorizationRequest, presenting: UIViewController, completionHandler: @escaping (OIDAuthState?, Error?) -> Void) {
+    mutating func doAuthorization(byPresenting: OIDAuthorizationRequest, presenting: UIViewController, completionHandler: @escaping (OIDAuthStateWrapping?, Error?) -> Void) {
         currentAuthorizationFlow = OIDAuthState.authState(
             byPresenting: byPresenting,
             presenting: presenting,
