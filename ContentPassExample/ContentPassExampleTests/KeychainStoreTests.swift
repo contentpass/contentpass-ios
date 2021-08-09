@@ -3,31 +3,7 @@ import XCTest
 import AppAuth
 
 final class KeychainStoreTests: XCTestCase {
-    private let dummyAuthState1: MockedAuthState = {
-        let state = MockedAuthState()
-        state.accessToken = UUID().uuidString
-        state.accessTokenExpirationDate = Date()
-        state.idToken = UUID().uuidString
-        state.isAuthorized = true
-        state.refreshToken = UUID().uuidString
-        state.tokenType = UUID().uuidString
-        state.tokenScope = UUID().uuidString
-        state.scope = UUID().uuidString
-        return state
-    }()
-    
-    private let dummyAuthState2: MockedAuthState = {
-        let state = MockedAuthState()
-        state.accessToken = UUID().uuidString
-        state.accessTokenExpirationDate = Date()
-        state.idToken = UUID().uuidString
-        state.isAuthorized = true
-        state.refreshToken = UUID().uuidString
-        state.tokenType = UUID().uuidString
-        state.tokenScope = UUID().uuidString
-        state.scope = UUID().uuidString
-        return state
-    }()
+    private let dummyAuthState = MockedAuthState.createRandom()
     
     func testInitGeneratesCorrectKeyPrefix() {
         let string = UUID().uuidString
@@ -44,17 +20,17 @@ final class KeychainStoreTests: XCTestCase {
     
     func testStoredAuthStateIsRetrievable() {
         let store = KeychainStore(clientId: "some.client.id")
-        store.storeAuthState(dummyAuthState1)
+        store.storeAuthState(dummyAuthState)
         let result = store.retrieveAuthState()
         
         XCTAssertNotNil(result)
-        XCTAssertEqual(result?.accessToken, dummyAuthState1.accessToken)
-        XCTAssertEqual(result as! MockedAuthState, dummyAuthState1)
+        XCTAssertEqual(result?.accessToken, dummyAuthState.accessToken)
+        XCTAssertEqual(result as! MockedAuthState, dummyAuthState)
     }
     
     func testDeleteAuthState() {
         let store = KeychainStore(clientId: "some.client.id")
-        store.storeAuthState(dummyAuthState1)
+        store.storeAuthState(dummyAuthState)
     
         XCTAssertNotNil(store.retrieveAuthState())
         store.deleteAuthState()
