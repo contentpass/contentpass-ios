@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		C20AEC5426C18DC8003F07CB /* AuthorizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20AEC5326C18DC8003F07CB /* AuthorizerTests.swift */; };
 		C20AEC5626C19C3A003F07CB /* MockedOIDClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20AEC5526C19C3A003F07CB /* MockedOIDClient.swift */; };
+		C20AEC5B26C19DC3003F07CB /* ContentPassTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20AEC5A26C19DC3003F07CB /* ContentPassTests.swift */; };
+		C220915E26C411FE00B4C95E /* ContentPass in Frameworks */ = {isa = PBXBuildFile; productRef = C220915D26C411FE00B4C95E /* ContentPass */; };
 		C285ABC526C15A0B0066844B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C285ABC426C15A0B0066844B /* AppDelegate.swift */; };
 		C285ABC726C15A0B0066844B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C285ABC626C15A0B0066844B /* SceneDelegate.swift */; };
 		C285ABC926C15A0B0066844B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C285ABC826C15A0B0066844B /* ViewController.swift */; };
@@ -16,7 +18,6 @@
 		C285ABCE26C15A0D0066844B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C285ABCD26C15A0D0066844B /* Assets.xcassets */; };
 		C285ABD126C15A0D0066844B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C285ABCF26C15A0D0066844B /* LaunchScreen.storyboard */; };
 		C285ABDC26C15A0D0066844B /* KeychainStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C285ABDB26C15A0D0066844B /* KeychainStoreTests.swift */; };
-		C285ABF626C15B1A0066844B /* ContentPass in Frameworks */ = {isa = PBXBuildFile; productRef = C285ABF526C15B1A0066844B /* ContentPass */; };
 		C285ABF826C17F650066844B /* MockedAuthState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C285ABF726C17F650066844B /* MockedAuthState.swift */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +34,7 @@
 /* Begin PBXFileReference section */
 		C20AEC5326C18DC8003F07CB /* AuthorizerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizerTests.swift; sourceTree = "<group>"; };
 		C20AEC5526C19C3A003F07CB /* MockedOIDClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockedOIDClient.swift; sourceTree = "<group>"; };
+		C20AEC5A26C19DC3003F07CB /* ContentPassTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentPassTests.swift; sourceTree = "<group>"; };
 		C285ABC126C15A0B0066844B /* ContentPassExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ContentPassExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C285ABC426C15A0B0066844B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C285ABC626C15A0B0066844B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -52,6 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C220915E26C411FE00B4C95E /* ContentPass in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,13 +62,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C285ABF626C15B1A0066844B /* ContentPass in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C20AEC5726C19D18003F07CB /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				C285ABF726C17F650066844B /* MockedAuthState.swift */,
+				C20AEC5526C19C3A003F07CB /* MockedOIDClient.swift */,
+			);
+			path = Mocks;
+			sourceTree = "<group>";
+		};
 		C285ABB826C15A0B0066844B = {
 			isa = PBXGroup;
 			children = (
@@ -102,11 +113,11 @@
 		C285ABDA26C15A0D0066844B /* ContentPassExampleTests */ = {
 			isa = PBXGroup;
 			children = (
+				C20AEC5726C19D18003F07CB /* Mocks */,
 				C285ABDB26C15A0D0066844B /* KeychainStoreTests.swift */,
 				C285ABDD26C15A0D0066844B /* Info.plist */,
-				C285ABF726C17F650066844B /* MockedAuthState.swift */,
 				C20AEC5326C18DC8003F07CB /* AuthorizerTests.swift */,
-				C20AEC5526C19C3A003F07CB /* MockedOIDClient.swift */,
+				C20AEC5A26C19DC3003F07CB /* ContentPassTests.swift */,
 			);
 			path = ContentPassExampleTests;
 			sourceTree = "<group>";
@@ -134,6 +145,9 @@
 			dependencies = (
 			);
 			name = ContentPassExample;
+			packageProductDependencies = (
+				C220915D26C411FE00B4C95E /* ContentPass */,
+			);
 			productName = ContentPassExample;
 			productReference = C285ABC126C15A0B0066844B /* ContentPassExample.app */;
 			productType = "com.apple.product-type.application";
@@ -153,7 +167,6 @@
 			);
 			name = ContentPassExampleTests;
 			packageProductDependencies = (
-				C285ABF526C15B1A0066844B /* ContentPass */,
 			);
 			productName = ContentPassExampleTests;
 			productReference = C285ABD726C15A0D0066844B /* ContentPassExampleTests.xctest */;
@@ -232,6 +245,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C20AEC5426C18DC8003F07CB /* AuthorizerTests.swift in Sources */,
+				C20AEC5B26C19DC3003F07CB /* ContentPassTests.swift in Sources */,
 				C285ABF826C17F650066844B /* MockedAuthState.swift in Sources */,
 				C20AEC5626C19C3A003F07CB /* MockedOIDClient.swift in Sources */,
 				C285ABDC26C15A0D0066844B /* KeychainStoreTests.swift in Sources */,
@@ -499,7 +513,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C285ABF526C15B1A0066844B /* ContentPass */ = {
+		C220915D26C411FE00B4C95E /* ContentPass */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ContentPass;
 		};

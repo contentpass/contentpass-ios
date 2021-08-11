@@ -79,6 +79,5 @@ extension MockedAuthState {
             && lhs.additionalParameters?.count == rhs.additionalParameters?.count
             && lhs.scope == rhs.scope
             && lhs.tokenScope == rhs.tokenScope
-            && lhs.wasTokenRefreshPerformed == rhs.wasTokenRefreshPerformed
     }
 }

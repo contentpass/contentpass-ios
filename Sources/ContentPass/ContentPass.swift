@@ -7,33 +7,47 @@ public protocol ContentPassDelegate: AnyObject  {
 }
 
 public class ContentPass: NSObject {
-    public enum State {
-        case initializing
-        case unauthorized
-        case authorized
-    }
     private let clientId: String
-    private let clientSecret = "ahc0oongie6iigaex7ciengie0quaiphuoQueeZa"
-    private let clientRedirectUri = URL(string: "de.t-online.pur://oauth")!
-    private let discoveryUrl = URL(string: "https://pur.t-online.de")!
+    private static let clientSecret = "ahc0oongie6iigaex7ciengie0quaiphuoQueeZa"
+    private static let clientRedirectUri = URL(string: "de.t-online.pur://oauth")!
+    private static let discoveryUrl = URL(string: "https://pur.t-online.de")!
+//    private static let clientSecret = "PAWk3Tcyippx6Y3XJs5ENYgeSH5oC74fJFkqqe4N"
+//    private static let clientRedirectUri = URL(string: "de.contentpass.demo://oauth")!
+//    private static let discoveryUrl = URL(string: "https://my.contentpass.io")!
     
-    private var oidAuthState: OIDAuthStateWrapping? {
+    var oidAuthState: OIDAuthStateWrapping? {
         didSet { didSetAuthState(oidAuthState) }
     }
-    private let keychain: KeychainStoring
-    private let authorizer: Authorizing
+    let keychain: KeychainStoring
+    let authorizer: Authorizing
     
-    private var refreshTimer: Timer?
+    var refreshTimer: Timer?
     
     public var state = State.initializing { didSet { didSetState(state) } }
     
     public weak var delegate: ContentPassDelegate?
     
     public convenience init(clientId: String) {
-        self.init(clientId: clientId, keychain: KeychainStore(clientId: clientId))
+        let authorizer = Authorizer(
+            clientId: clientId,
+            clientSecret: ContentPass.clientSecret,
+            clientRedirectUri: ContentPass.clientRedirectUri,
+            discoveryUrl: ContentPass.discoveryUrl
+        )
+        self.init(clientId: clientId, keychain: KeychainStore(clientId: clientId), authorizer: authorizer)
     }
     
-    init(clientId: String, keychain: KeychainStoring) {
+    convenience init(clientId: String, keychain: KeychainStoring) {
+        let authorizer = Authorizer(
+            clientId: clientId,
+            clientSecret: ContentPass.clientSecret,
+            clientRedirectUri: ContentPass.clientRedirectUri,
+            discoveryUrl: ContentPass.discoveryUrl
+        )
+        self.init(clientId: clientId, keychain: keychain, authorizer: authorizer)
+    }
+    
+    init(clientId: String, keychain: KeychainStoring, authorizer: Authorizing) {
         defer {
             validateAuthState()
             didSetAuthState(oidAuthState)
@@ -41,6 +55,7 @@ public class ContentPass: NSObject {
         
         self.clientId = clientId
         self.keychain = keychain
+        self.authorizer = authorizer
         
         if let authState = keychain.retrieveAuthState() {
             oidAuthState = authState
@@ -48,12 +63,6 @@ public class ContentPass: NSObject {
             state = .unauthorized
         }
         
-        authorizer = Authorizer(
-            clientId: clientId,
-            clientSecret: clientSecret,
-            clientRedirectUri: clientRedirectUri,
-            discoveryUrl: discoveryUrl
-        )
         
         super.init()
     }
@@ -61,6 +70,7 @@ public class ContentPass: NSObject {
     private func validateAuthState() {
         guard
             let authState = oidAuthState,
+            authState.isAuthorized,
             let validUntil = authState.accessTokenExpirationDate
         else {
             state = .unauthorized
@@ -116,12 +126,19 @@ public class ContentPass: NSObject {
     private func didSetAuthState(_ authState: OIDAuthStateWrapping?) {
         oidAuthState?.errorDelegate = self
         oidAuthState?.stateChangeDelegate = self
+        guard let authState = authState else { return }
+        didChange(wrappedState: authState)
     }
 }
 
 extension ContentPass: OIDAuthStateErrorDelegate {
     public func authState(_ state: OIDAuthState, didEncounterAuthorizationError error: Error) {
-        print("authstate error: \(error)")
+        authState(wrappedState: state, didEncounterAuthorizationError: error)
+    }
+    
+    func authState(wrappedState: OIDAuthStateWrapping, didEncounterAuthorizationError error: Error) {
+        self.state = .error(error)
+        keychain.deleteAuthState()
     }
 }
 
@@ -131,7 +148,6 @@ extension ContentPass: OIDAuthStateChangeDelegate {
     }
     
     func didChange(wrappedState: OIDAuthStateWrapping) {
-        print("state changed: \(wrappedState.accessToken ?? "no access token")")
         if wrappedState.isAuthorized {
             self.state = .authorized
             guard let refreshDelay = wrappedState.accessTokenExpirationDate?.timeIntervalSinceNow else { return }

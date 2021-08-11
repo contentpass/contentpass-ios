@@ -2,10 +2,10 @@ import UIKit
 import AppAuth
 
 class Authorizer: Authorizing {
-    private let clientId: String
-    private let clientSecret: String?
-    private let clientRedirectUri: URL
-    private let discoveryUrl: URL
+    let clientId: String
+    let clientSecret: String?
+    let clientRedirectUri: URL
+    let discoveryUrl: URL
     
     private var oidServiceConfiguration: OIDServiceConfiguration?
     

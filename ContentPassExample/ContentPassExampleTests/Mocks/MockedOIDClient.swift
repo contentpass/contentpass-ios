@@ -23,6 +23,7 @@ class MockedOIDClient: OIDClientWrapping {
     var calledCounter = 0
     
     var authRequest: OIDAuthorizationRequest?
+    var shouldReturnAuthState: OIDAuthStateWrapping?
     
     func discoverConfiguration(forIssuer: URL, completionHandler: @escaping (OIDServiceConfiguration?, Error?) -> Void) {
         calledCounter += 1
@@ -55,7 +56,7 @@ class MockedOIDClient: OIDClientWrapping {
         case MockedOIDClient.unexpectedClientId:
             completionHandler(nil, nil)
         default:
-            completionHandler(MockedAuthState.createRandom(), nil)
+            completionHandler(shouldReturnAuthState ?? MockedAuthState.createRandom(), nil)
         }
     }
 }
