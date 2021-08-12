@@ -29,7 +29,7 @@ class ContentPassTests: XCTestCase {
         let keychain = KeychainStore(clientId: clientId)
         let contentPass = ContentPass(clientId: clientId, keychain: keychain)
 
-        XCTAssertEqual(contentPass.state, .unauthorized)
+        XCTAssertEqual(contentPass.state, .unauthenticated)
     }
 
     func testConvenienceInitializerSetsCorrectClientId() {
@@ -89,15 +89,14 @@ class ContentPassTests: XCTestCase {
         authState.accessTokenExpirationDate = Date(timeIntervalSinceNow: 1)
         keychain.storeAuthState(authState)
         let contentPass = ContentPass(clientId: clientId, keychain: keychain)
-
-        XCTAssertEqual(contentPass.state, .authorized)
+        XCTAssertEqual(contentPass.state, .initializing)
         contentPass.oidAuthState = nil
         let expectation = XCTestExpectation(description: "Wait for timer to fire")
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 1.5)
-        XCTAssertEqual(contentPass.state, .unauthorized)
+        XCTAssertEqual(contentPass.state, .unauthenticated)
     }
 
     func testAuthorizeSetsAuthStateCorrectly() {
@@ -180,8 +179,8 @@ class ContentPassTests: XCTestCase {
         let contentPass = ContentPass(clientId: clientId)
         contentPass.delegate = self
         XCTAssertNil(delegatedState)
-        contentPass.state = .authorized
-        XCTAssertEqual(delegatedState, .authorized)
+        contentPass.state = .authenticated(hasValidSubscription: true)
+        XCTAssertEqual(delegatedState, .authenticated(hasValidSubscription: true))
     }
 
     func testAuthStateChangeToUnauthorizedResultsInCorrectStateBubbling() {
@@ -190,34 +189,34 @@ class ContentPassTests: XCTestCase {
         contentPass.delegate = self
         let authState = MockedAuthState.createRandom()
         authState.isAuthorized = false
-        contentPass.state = .authorized
-        XCTAssertEqual(delegatedState, .authorized)
+        contentPass.state = .authenticated(hasValidSubscription: true)
+        XCTAssertEqual(delegatedState, .authenticated(hasValidSubscription: true))
         contentPass.didChange(authState)
-        XCTAssertEqual(delegatedState, .unauthorized)
+        XCTAssertEqual(delegatedState, .unauthenticated)
     }
 
     func testAuthStateChangeToUnauthorizedResultsInKeychainDeletion() {
-        let clientId = UUID().uuidString
-        let keychain = KeychainStore(clientId: clientId)
+        let keychain = KeychainStore(clientId: "")
         let authState = MockedAuthState.createRandom()
         authState.accessTokenExpirationDate = Date(timeIntervalSinceNow: 5)
         keychain.storeAuthState(authState)
-        let contentPass = ContentPass(clientId: clientId, keychain: keychain)
+        let contentPass = ContentPass(clientId: "", keychain: keychain)
         XCTAssertNotNil(keychain.retrieveAuthState())
         authState.isAuthorized = false
-        contentPass.didChange(authState)
+        contentPass.oidAuthState = authState
         XCTAssertNil(keychain.retrieveAuthState())
     }
 
     func testAuthStateChangeToAuthorizedResultsInCorrectStateBubbling() {
-        let clientId = UUID().uuidString
-        let contentPass = ContentPass(clientId: clientId)
+        let authorizer = Convenience.createDummyAuthorizer()
+        let contentPass = ContentPass(clientId: "", keychain: KeychainStore(clientId: ""), authorizer: authorizer)
         contentPass.delegate = self
+        contentPass.state = .unauthenticated
+        XCTAssertEqual(delegatedState, .unauthenticated)
         let authState = MockedAuthState.createRandom()
-        contentPass.state = .unauthorized
-        XCTAssertEqual(delegatedState, .unauthorized)
-        contentPass.didChange(authState)
-        XCTAssertEqual(delegatedState, .authorized)
+        contentPass.oidAuthState = authState
+        wait(for: [], timeout: 0.5)
+        XCTAssertEqual(delegatedState, .authenticated(hasValidSubscription: true))
     }
 
     func testAuthStateChangeToAuthorizedStoresAuthState() {

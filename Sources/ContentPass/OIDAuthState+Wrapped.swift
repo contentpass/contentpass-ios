@@ -4,6 +4,8 @@ extension OIDAuthState: OIDAuthStateWrapping {
     func performTokenRefresh() {
         assert(errorDelegate != nil)
         assert(stateChangeDelegate != nil)
+
+        setNeedsTokenRefresh()
         // no completion handling needed because we implement the delegates
         performAction(freshTokens: { _, _, _ in })
     }
