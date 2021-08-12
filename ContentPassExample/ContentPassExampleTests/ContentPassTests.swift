@@ -192,7 +192,7 @@ class ContentPassTests: XCTestCase {
         authState.isAuthorized = false
         contentPass.state = .authorized
         XCTAssertEqual(delegatedState, .authorized)
-        contentPass.didChange(wrappedState: authState)
+        contentPass.didChange(authState)
         XCTAssertEqual(delegatedState, .unauthorized)
     }
     
@@ -205,7 +205,7 @@ class ContentPassTests: XCTestCase {
         let contentPass = ContentPass(clientId: clientId, keychain: keychain)
         XCTAssertNotNil(keychain.retrieveAuthState())
         authState.isAuthorized = false
-        contentPass.didChange(wrappedState: authState)
+        contentPass.didChange(authState)
         XCTAssertNil(keychain.retrieveAuthState())
     }
     
@@ -216,7 +216,7 @@ class ContentPassTests: XCTestCase {
         let authState = MockedAuthState.createRandom()
         contentPass.state = .unauthorized
         XCTAssertEqual(delegatedState, .unauthorized)
-        contentPass.didChange(wrappedState: authState)
+        contentPass.didChange(authState)
         XCTAssertEqual(delegatedState, .authorized)
     }
     
@@ -227,7 +227,7 @@ class ContentPassTests: XCTestCase {
         authState.accessTokenExpirationDate = Date(timeIntervalSinceNow: 5)
         let contentPass = ContentPass(clientId: clientId, keychain: keychain)
         XCTAssertNil(keychain.retrieveAuthState())
-        contentPass.didChange(wrappedState: authState)
+        contentPass.didChange(authState)
         XCTAssertEqual(keychain.retrieveAuthState() as! MockedAuthState, authState)
     }
     
@@ -236,7 +236,7 @@ class ContentPassTests: XCTestCase {
         let authState = MockedAuthState.createRandom()
         authState.accessTokenExpirationDate = Date(timeIntervalSinceNow: 5)
         let contentPass = ContentPass(clientId: clientId)
-        contentPass.didChange(wrappedState: authState)
+        contentPass.didChange(authState)
         XCTAssertNotNil(contentPass.refreshTimer)
         guard let timer = contentPass.refreshTimer else {
             XCTFail("can't be nil, was just checked")
@@ -253,7 +253,7 @@ class ContentPassTests: XCTestCase {
         let authState = MockedAuthState.createRandom()
         authState.accessTokenExpirationDate = nil
         let contentPass = ContentPass(clientId: clientId)
-        contentPass.didChange(wrappedState: authState)
+        contentPass.didChange(authState)
         XCTAssertNil(contentPass.refreshTimer)
     }
     
@@ -262,7 +262,7 @@ class ContentPassTests: XCTestCase {
         let authState = MockedAuthState.createRandom()
         let contentPass = ContentPass(clientId: clientId)
         contentPass.delegate = self
-        contentPass.authState(wrappedState: authState, didEncounterAuthorizationError: ContentPassError.missingOIDServiceConfiguration)
+        contentPass.authState(authState, didEncounterAuthorizationError: ContentPassError.missingOIDServiceConfiguration)
         XCTAssertEqual(delegatedState, .error(ContentPassError.missingOIDServiceConfiguration))
     }
     
@@ -275,7 +275,7 @@ class ContentPassTests: XCTestCase {
         let contentPass = ContentPass(clientId: clientId, keychain: keychain)
         contentPass.delegate = self
         XCTAssertEqual(authState, keychain.retrieveAuthState() as! MockedAuthState)
-        contentPass.authState(wrappedState: authState, didEncounterAuthorizationError: ContentPassError.missingOIDServiceConfiguration)
+        contentPass.authState(authState, didEncounterAuthorizationError: ContentPassError.missingOIDServiceConfiguration)
         XCTAssertNil(keychain.retrieveAuthState())
     }
 }
