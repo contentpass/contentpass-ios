@@ -1,0 +1,19 @@
+name: Unit_Tests
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Build and run tests of ContentPassExample
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: List available simulators
+        run: xcrun xctrace list devices  
+      - name: Get device
+        run: xcrun xctrace list devices 2>&1 | grep -oE 'iPhone.*?[^\(]+' | head -1 | awk '{$1=$1;print}'
+      - name: Run tests
+        run: xcodebuild test -scheme ContentPassExample -workspace ContentPassExample/ContentPassExample.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 12 Pro' | xcpretty && exit ${PIPESTATUS[0]}
