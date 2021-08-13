@@ -3,25 +3,25 @@ import AppAuth
 
 class MockedAuthState: NSObject, OIDAuthStateWrapping {
     static var supportsSecureCoding = true
-    
+
     var isAuthorized = false
     var accessToken: String?
     var accessTokenExpirationDate: Date?
     var refreshToken: String?
     var tokenType: String?
     var idToken: String?
-    var additionalParameters: [String : NSCopying & NSObjectProtocol]?
+    var additionalParameters: [String: NSCopying & NSObjectProtocol]?
     var scope: String?
     var tokenScope: String?
     var authorizationError: Error?
-    var errorDelegate: OIDAuthStateErrorDelegate?
-    var stateChangeDelegate: OIDAuthStateChangeDelegate?
+    weak var errorDelegate: OIDAuthStateErrorDelegate?
+    weak var stateChangeDelegate: OIDAuthStateChangeDelegate?
     var wasTokenRefreshPerformed = false
-    
+
     func performTokenRefresh() {
         wasTokenRefreshPerformed = true
     }
-    
+
     static func createRandom() -> MockedAuthState {
         let state = MockedAuthState()
         state.accessToken = UUID().uuidString
@@ -34,7 +34,7 @@ class MockedAuthState: NSObject, OIDAuthStateWrapping {
         state.scope = UUID().uuidString
         return state
     }
-    
+
     required init?(coder: NSCoder) {
         isAuthorized = coder.decodeBool(forKey: "isAuthorized")
         accessToken = coder.decodeObject(forKey: "accessToken") as? String
@@ -45,11 +45,11 @@ class MockedAuthState: NSObject, OIDAuthStateWrapping {
         scope = coder.decodeObject(forKey: "scope") as? String
         tokenScope = coder.decodeObject(forKey: "tokenScope") as? String
     }
-    
+
     override init() {
         super.init()
     }
-    
+
     func encode(with coder: NSCoder) {
         coder.encode(isAuthorized, forKey: "isAuthorized")
         coder.encode(accessToken, forKey: "accessToken")
@@ -60,7 +60,7 @@ class MockedAuthState: NSObject, OIDAuthStateWrapping {
         coder.encode(scope, forKey: "scope")
         coder.encode(tokenScope, forKey: "tokenScope")
     }
-    
+
 }
 
 // MARK: Equatable
@@ -69,7 +69,7 @@ extension MockedAuthState {
         guard let other = object as? MockedAuthState else { return false }
         return other == self
     }
-    
+
     static func == (lhs: MockedAuthState, rhs: MockedAuthState) -> Bool {
         lhs.isAuthorized == rhs.isAuthorized
             && lhs.accessToken == rhs.accessToken

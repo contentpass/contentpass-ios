@@ -13,21 +13,20 @@ class MockedOIDClient: OIDClientWrapping {
         authorizationEndpoint: URL(string: "auth.endpoint")!,
         tokenEndpoint: URL(string: "token.endpoint")!
     )
-    
+
     static let errorInAuthorizationClientId = "authError"
     static let unexpectedClientId = "unexpectedError"
-    
-    
+
     var discoveryUrl: URL?
     var didReturnConfiguration = false
     var calledCounter = 0
-    
+
     var authRequest: OIDAuthorizationRequest?
     var shouldReturnAuthState: OIDAuthStateWrapping?
-    
+
     func discoverConfiguration(forIssuer: URL, completionHandler: @escaping (OIDServiceConfiguration?, Error?) -> Void) {
         calledCounter += 1
-        
+
         switch forIssuer {
         case MockedOIDClient.validDiscoveryUrl:
             discoveryUrl = forIssuer
@@ -43,13 +42,13 @@ class MockedOIDClient: OIDClientWrapping {
             }
         default:
             completionHandler(nil, ClientError.discoveryError)
-            
+
         }
     }
-    
+
     func doAuthorization(byPresenting: OIDAuthorizationRequest, presenting: UIViewController, completionHandler: @escaping (OIDAuthStateWrapping?, Error?) -> Void) {
         authRequest = byPresenting
-        
+
         switch byPresenting.clientID {
         case MockedOIDClient.errorInAuthorizationClientId:
             completionHandler(nil, ClientError.authError)
