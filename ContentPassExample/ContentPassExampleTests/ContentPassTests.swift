@@ -3,7 +3,7 @@ import XCTest
 
 class ContentPassTests: XCTestCase {
     var delegatedState: ContentPass.State?
-    
+
     func testAuthorizerGetsSetUpProperly() {
         let clientId = UUID().uuidString
         let keychain = KeychainStore(clientId: clientId)
@@ -13,31 +13,31 @@ class ContentPassTests: XCTestCase {
         XCTAssertEqual(contentPass.authorizer.clientRedirectUri, URL(string: "de.t-online.pur://oauth")!)
         XCTAssertEqual(contentPass.authorizer.discoveryUrl, URL(string: "https://pur.t-online.de")!)
     }
-    
+
     func testKeyChainAuthStateRetrievalWorks() {
         let clientId = UUID().uuidString
         let keychain = KeychainStore(clientId: clientId)
         let authState = MockedAuthState.createRandom()
         keychain.storeAuthState(authState)
         let contentPass = ContentPass(clientId: clientId, keychain: keychain)
-        
+
         XCTAssertEqual(authState, contentPass.oidAuthState as! MockedAuthState)
     }
-    
+
     func testSetUnauthorizedWhenNoAuthStateOnInit() {
         let clientId = UUID().uuidString
         let keychain = KeychainStore(clientId: clientId)
         let contentPass = ContentPass(clientId: clientId, keychain: keychain)
-        
+
         XCTAssertEqual(contentPass.state, .unauthorized)
     }
-    
+
     func testConvenienceInitializerSetsCorrectClientId() {
         let clientId = UUID().uuidString
         let contentPass = ContentPass(clientId: clientId)
         XCTAssertEqual(contentPass.authorizer.clientId, clientId)
     }
-    
+
     func testAuthStateValidationDoesTokenRefreshWhenNeeded() {
         let clientId = UUID().uuidString
         let keychain = KeychainStore(clientId: clientId)
@@ -47,7 +47,7 @@ class ContentPassTests: XCTestCase {
         let contentPass = ContentPass(clientId: clientId, keychain: keychain)
         XCTAssert((contentPass.oidAuthState as? MockedAuthState)?.wasTokenRefreshPerformed ?? false)
     }
-    
+
     func testAuthStateValidationSetsTokenRefreshTimer() {
         let clientId = UUID().uuidString
         let keychain = KeychainStore(clientId: clientId)
@@ -65,7 +65,7 @@ class ContentPassTests: XCTestCase {
         let timerIsWithinRange = timerInterval < 5 && timerInterval >= 4
         assert(timerIsWithinRange)
     }
-    
+
     func testRefreshTimerInvokesTokenRefresh() {
         let clientId = UUID().uuidString
         let keychain = KeychainStore(clientId: clientId)
@@ -81,7 +81,7 @@ class ContentPassTests: XCTestCase {
         wait(for: [expectation], timeout: 1.5)
         XCTAssert((contentPass.oidAuthState as? MockedAuthState)?.wasTokenRefreshPerformed ?? false)
     }
-    
+
     func testTokenRefreshCorrectlySetsUnauthorizedWhenTokenGotLostBeforehand() {
         let clientId = UUID().uuidString
         let keychain = KeychainStore(clientId: clientId)
@@ -89,7 +89,7 @@ class ContentPassTests: XCTestCase {
         authState.accessTokenExpirationDate = Date(timeIntervalSinceNow: 1)
         keychain.storeAuthState(authState)
         let contentPass = ContentPass(clientId: clientId, keychain: keychain)
-        
+
         XCTAssertEqual(contentPass.state, .authorized)
         contentPass.oidAuthState = nil
         let expectation = XCTestExpectation(description: "Wait for timer to fire")
@@ -99,7 +99,7 @@ class ContentPassTests: XCTestCase {
         wait(for: [expectation], timeout: 1.5)
         XCTAssertEqual(contentPass.state, .unauthorized)
     }
-    
+
     func testAuthorizeSetsAuthStateCorrectly() {
         let clientId = UUID().uuidString
         let keychain = KeychainStore(clientId: clientId)
@@ -118,7 +118,7 @@ class ContentPassTests: XCTestCase {
         contentPass.authorize(presentingViewController: UIViewController(), completionHandler: { _ in })
         XCTAssertEqual(contentPass.oidAuthState as! MockedAuthState, authState)
     }
-    
+
     func testAuthorizeReturnsSuccessOnSuccess() {
         let clientId = UUID().uuidString
         let keychain = KeychainStore(clientId: clientId)
@@ -145,7 +145,7 @@ class ContentPassTests: XCTestCase {
         }
         wait(for: [expectation], timeout: 2)
     }
-    
+
     func testAuthorizeBubblesUpUnderlyingErrors() {
         let clientId = UUID().uuidString
         let keychain = KeychainStore(clientId: clientId)
@@ -174,7 +174,7 @@ class ContentPassTests: XCTestCase {
         }
         wait(for: [expectation], timeout: 2)
     }
-    
+
     func testStateGetsPassedToDelegate() {
         let clientId = UUID().uuidString
         let contentPass = ContentPass(clientId: clientId)
@@ -183,7 +183,7 @@ class ContentPassTests: XCTestCase {
         contentPass.state = .authorized
         XCTAssertEqual(delegatedState, .authorized)
     }
-    
+
     func testAuthStateChangeToUnauthorizedResultsInCorrectStateBubbling() {
         let clientId = UUID().uuidString
         let contentPass = ContentPass(clientId: clientId)
@@ -195,7 +195,7 @@ class ContentPassTests: XCTestCase {
         contentPass.didChange(authState)
         XCTAssertEqual(delegatedState, .unauthorized)
     }
-    
+
     func testAuthStateChangeToUnauthorizedResultsInKeychainDeletion() {
         let clientId = UUID().uuidString
         let keychain = KeychainStore(clientId: clientId)
@@ -208,7 +208,7 @@ class ContentPassTests: XCTestCase {
         contentPass.didChange(authState)
         XCTAssertNil(keychain.retrieveAuthState())
     }
-    
+
     func testAuthStateChangeToAuthorizedResultsInCorrectStateBubbling() {
         let clientId = UUID().uuidString
         let contentPass = ContentPass(clientId: clientId)
@@ -219,7 +219,7 @@ class ContentPassTests: XCTestCase {
         contentPass.didChange(authState)
         XCTAssertEqual(delegatedState, .authorized)
     }
-    
+
     func testAuthStateChangeToAuthorizedStoresAuthState() {
         let clientId = UUID().uuidString
         let keychain = KeychainStore(clientId: clientId)
@@ -230,7 +230,7 @@ class ContentPassTests: XCTestCase {
         contentPass.didChange(authState)
         XCTAssertEqual(keychain.retrieveAuthState() as! MockedAuthState, authState)
     }
-    
+
     func testAuthStateChangeToAuthorizedCorrectlySetsUpTokenRefresh() {
         let clientId = UUID().uuidString
         let authState = MockedAuthState.createRandom()
@@ -247,7 +247,7 @@ class ContentPassTests: XCTestCase {
         let timerIsWithinRange = timerInterval < 5 && timerInterval >= 4
         assert(timerIsWithinRange)
     }
-    
+
     func testAuthStateWithoutTokenTimeoutDoesNotSetRefreshTimer() {
         let clientId = UUID().uuidString
         let authState = MockedAuthState.createRandom()
@@ -256,7 +256,7 @@ class ContentPassTests: XCTestCase {
         contentPass.didChange(authState)
         XCTAssertNil(contentPass.refreshTimer)
     }
-    
+
     func testAuthStateErrorBubblesUpCorrectly() {
         let clientId = UUID().uuidString
         let authState = MockedAuthState.createRandom()
@@ -265,7 +265,7 @@ class ContentPassTests: XCTestCase {
         contentPass.authState(authState, didEncounterAuthorizationError: ContentPassError.missingOIDServiceConfiguration)
         XCTAssertEqual(delegatedState, .error(ContentPassError.missingOIDServiceConfiguration))
     }
-    
+
     func testAuthStateErrorRemovesTokenFromKeychain() {
         let clientId = UUID().uuidString
         let keychain = KeychainStore(clientId: clientId)

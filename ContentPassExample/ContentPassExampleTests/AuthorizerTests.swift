@@ -15,7 +15,7 @@ final class AuthorizerTests: XCTestCase {
         XCTAssert(dummyClient.didReturnConfiguration)
         XCTAssertEqual(dummyClient.discoveryUrl, MockedOIDClient.validDiscoveryUrl)
     }
-    
+
     func testAuthorizeRunsConfigurationDiscoveryIfNeeded() {
         let dummyClient = MockedOIDClient()
         let authorizer = Authorizer(
@@ -30,7 +30,7 @@ final class AuthorizerTests: XCTestCase {
         XCTAssertEqual(dummyClient.discoveryUrl, MockedOIDClient.validDiscoveryUrl)
         XCTAssert(dummyClient.didReturnConfiguration)
     }
-    
+
     func testAuthorizeDoesNotRunDiscoveryIfConfigurationPresent() {
         let dummyClient = MockedOIDClient()
         let authorizer = Authorizer(
@@ -45,7 +45,7 @@ final class AuthorizerTests: XCTestCase {
         XCTAssertEqual(preAuthorize, dummyClient.calledCounter)
         XCTAssertEqual(dummyClient.calledCounter, 1)
     }
-    
+
     func testAuthorizeBubblesUpDiscoveryError() {
         let dummyClient = MockedOIDClient()
         let authorizer = Authorizer(
@@ -69,7 +69,7 @@ final class AuthorizerTests: XCTestCase {
         }
         wait(for: [expectation], timeout: 10.0)
     }
-    
+
     func testAuthorizeBubblesUpUnderlyingError() {
         let dummyClient = MockedOIDClient()
         let authorizer = Authorizer(
@@ -93,7 +93,7 @@ final class AuthorizerTests: XCTestCase {
         }
         wait(for: [expectation], timeout: 10.0)
     }
-    
+
     func testAuthorizeReturnsUnexpectedStateCorrectly() {
         let dummyClient = MockedOIDClient()
         let authorizer = Authorizer(
@@ -108,7 +108,7 @@ final class AuthorizerTests: XCTestCase {
             switch result {
             case .success:
                 XCTFail("this should have resulted in an error")
-            case .failure(ContentPassError.unexpectedState(.missingAuthorizationStateAfterAuthorization)):
+            case .failure(ContentPassError.unexpectedState(.missingAuthStateAfterAuthorization)):
                 break
             default:
                 XCTFail("bubbled up the wrong error")
@@ -117,13 +117,13 @@ final class AuthorizerTests: XCTestCase {
         }
         wait(for: [expectation], timeout: 10.0)
     }
-    
+
     func testAuthorizeGeneratesCorrectAuthorizationRequest() {
         let dummyClient = MockedOIDClient()
         let clientId = UUID().uuidString
         let clientSecret = UUID().uuidString
         let redirectUri = URL(string: "this.url.is.correct")!
-        
+
         let authorizer = Authorizer(
             clientId: clientId,
             clientSecret: clientSecret,
@@ -137,5 +137,6 @@ final class AuthorizerTests: XCTestCase {
         XCTAssertEqual(dummyClient.authRequest?.redirectURL, redirectUri)
         XCTAssertEqual(dummyClient.authRequest?.scope, "openid offline_access contentpass")
         XCTAssertEqual(dummyClient.authRequest?.responseType, OIDResponseTypeCode)
+        XCTAssertEqual(dummyClient.authRequest?.additionalParameters, ["cp_route": "login"])
     }
 }

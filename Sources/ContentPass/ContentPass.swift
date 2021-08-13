@@ -2,7 +2,7 @@ import AppAuth
 import AuthenticationServices
 import UIKit
 
-public protocol ContentPassDelegate: AnyObject  {
+public protocol ContentPassDelegate: AnyObject {
     func onStateChanged(contentPass: ContentPass, newState: ContentPass.State)
 }
 
@@ -14,20 +14,20 @@ public class ContentPass: NSObject {
 //    private static let clientSecret: String? = nil
 //    private static let clientRedirectUri = URL(string: "de.contentpass.demo://oauth")!
 //    private static let discoveryUrl = URL(string: "https://my.contentpass.io")!
-    
+
     var oidAuthState: OIDAuthStateWrapping? {
         didSet { didSetAuthState(oidAuthState) }
     }
     let keychain: KeychainStoring
     let authorizer: Authorizing
-    
+
     let delegateWrapper = OIDDelegateWrapper()
     var refreshTimer: Timer?
-    
+
     public var state = State.initializing { didSet { didSetState(state) } }
-    
+
     public weak var delegate: ContentPassDelegate?
-    
+
     public convenience init(clientId: String) {
         let authorizer = Authorizer(
             clientId: clientId,
@@ -37,7 +37,7 @@ public class ContentPass: NSObject {
         )
         self.init(clientId: clientId, keychain: KeychainStore(clientId: clientId), authorizer: authorizer)
     }
-    
+
     convenience init(clientId: String, keychain: KeychainStoring) {
         let authorizer = Authorizer(
             clientId: clientId,
@@ -47,27 +47,27 @@ public class ContentPass: NSObject {
         )
         self.init(clientId: clientId, keychain: keychain, authorizer: authorizer)
     }
-    
+
     init(clientId: String, keychain: KeychainStoring, authorizer: Authorizing) {
         defer {
             delegateWrapper.delegate = self
             validateAuthState()
             didSetAuthState(oidAuthState)
         }
-        
+
         self.clientId = clientId
         self.keychain = keychain
         self.authorizer = authorizer
-        
+
         if let authState = keychain.retrieveAuthState() {
             oidAuthState = authState
         } else {
             state = .unauthorized
         }
-        
+
         super.init()
     }
-    
+
     private func validateAuthState() {
         guard
             let authState = oidAuthState,
@@ -77,9 +77,9 @@ public class ContentPass: NSObject {
             state = .unauthorized
             return
         }
-        
+
         let timeInterval = validUntil.timeIntervalSinceNow
-        
+
         if authState.isAuthorized && timeInterval > 0 {
             state = .authorized
             setRefreshTimer(delay: timeInterval)
@@ -87,19 +87,19 @@ public class ContentPass: NSObject {
             doTokenRefresh()
         }
     }
-    
+
     private func setRefreshTimer(delay: Double) {
         refreshTimer?.invalidate()
 
         refreshTimer = Timer.scheduledTimer(
             withTimeInterval: delay,
             repeats: false,
-            block: { [weak self] timer in
+            block: { [weak self] _ in
                 self?.doTokenRefresh()
             }
         )
     }
-    
+
     @objc
     private func doTokenRefresh() {
         guard let authState = oidAuthState else {
@@ -108,7 +108,7 @@ public class ContentPass: NSObject {
         }
         authState.performTokenRefresh()
     }
-    
+
     public func authorize(presentingViewController: UIViewController, completionHandler: @escaping (Result<Void, Error>) -> Void) {
         authorizer.authorize(presentingViewController: presentingViewController) { [weak self] result in
             switch result {
@@ -119,11 +119,11 @@ public class ContentPass: NSObject {
             completionHandler(result.map { _ in })
         }
     }
-    
+
     private func didSetState(_ state: State) {
         delegate?.onStateChanged(contentPass: self, newState: state)
     }
-    
+
     private func didSetAuthState(_ authState: OIDAuthStateWrapping?) {
         oidAuthState?.errorDelegate = delegateWrapper
         oidAuthState?.stateChangeDelegate = delegateWrapper
@@ -144,7 +144,7 @@ extension ContentPass: OIDDelegateWrapperDelegate {
             keychain.deleteAuthState()
         }
     }
-    
+
     func authState(_ state: OIDAuthStateWrapping, didEncounterAuthorizationError error: Error) {
         self.state = .error(error)
         keychain.deleteAuthState()
