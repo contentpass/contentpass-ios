@@ -87,7 +87,7 @@ class ContentPassTests: XCTestCase {
 
     func testTokenRefreshCorrectlySetsUnauthorizedWhenTokenGotLostBeforehand() {
         let authState = MockedAuthState.createRandom()
-        authState.accessTokenExpirationDate = Date(timeIntervalSinceNow: 0.1)
+        authState.accessTokenExpirationDate = Date(timeIntervalSinceNow: 0.5)
         keychain.storeAuthState(authState)
         let authorizer = Convenience.createDummyAuthorizer()
         let contentPass = ContentPass(clientId: "", keychain: keychain, authorizer: authorizer)
@@ -96,11 +96,7 @@ class ContentPassTests: XCTestCase {
 
         contentPass.oidAuthState = nil
 
-        let expectation = XCTestExpectation(description: "Wait for timer to fire")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 1)
+        wait(for: [], timeout: 1)
 
         XCTAssertEqual(contentPass.state, .unauthenticated)
     }
