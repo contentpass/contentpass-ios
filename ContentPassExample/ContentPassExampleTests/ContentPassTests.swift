@@ -199,7 +199,7 @@ class ContentPassTests: XCTestCase {
 
     func testAuthStateChangeToAuthorizedResultsInCorrectStateBubbling() {
         let authorizer = Convenience.createDummyAuthorizer()
-        let contentPass = ContentPass(clientId: "", keychain: KeychainStore(clientId: ""), authorizer: authorizer)
+        let contentPass = ContentPass(clientId: "", keychain: keychain, authorizer: authorizer)
         contentPass.delegate = self
         contentPass.state = .unauthenticated
 
@@ -263,7 +263,6 @@ class ContentPassTests: XCTestCase {
 
     func testAuthStateErrorRemovesTokenFromKeychain() {
         let authState = MockedAuthState.createRandom()
-        authState.accessTokenExpirationDate = Date(timeIntervalSinceNow: 5)
         keychain.storeAuthState(authState)
         let contentPass = ContentPass(clientId: clientId, keychain: keychain)
 
@@ -271,6 +270,20 @@ class ContentPassTests: XCTestCase {
 
         contentPass.authState(authState, didEncounterAuthorizationError: ContentPassError.missingOIDServiceConfiguration)
 
+        XCTAssertNil(keychain.retrieveAuthState())
+    }
+
+    func testLogout() {
+        let authState = MockedAuthState.createRandom()
+        let authorizer = Convenience.createDummyAuthorizer()
+        keychain.storeAuthState(authState)
+        let contentPass = ContentPass(clientId: "", keychain: keychain, authorizer: authorizer)
+        contentPass.delegate = self
+
+        XCTAssertEqual(contentPass.state, .authenticated(hasValidSubscription: true))
+
+        contentPass.logout()
+        XCTAssertEqual(delegatedState, .unauthenticated)
         XCTAssertNil(keychain.retrieveAuthState())
     }
 }
