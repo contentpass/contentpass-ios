@@ -14,7 +14,6 @@ class ContentPassTests: XCTestCase {
         let contentPass = ContentPass(clientId: clientId, keychain: keychain)
 
         XCTAssertEqual(contentPass.authorizer.clientId, clientId)
-        XCTAssertEqual(contentPass.authorizer.clientSecret, "ahc0oongie6iigaex7ciengie0quaiphuoQueeZa")
         XCTAssertEqual(contentPass.authorizer.clientRedirectUri, URL(string: "de.t-online.pur://oauth")!)
         XCTAssertEqual(contentPass.authorizer.discoveryUrl, URL(string: "https://pur.t-online.de")!)
     }

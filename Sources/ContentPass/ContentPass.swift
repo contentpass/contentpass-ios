@@ -8,12 +8,8 @@ public protocol ContentPassDelegate: AnyObject {
 
 public class ContentPass: NSObject {
     private let clientId: String
-    private static let clientSecret = "ahc0oongie6iigaex7ciengie0quaiphuoQueeZa"
     private static let clientRedirectUri = URL(string: "de.t-online.pur://oauth")!
     private static let discoveryUrl = URL(string: "https://pur.t-online.de")!
-//    private static let clientSecret: String? = nil
-//    private static let clientRedirectUri = URL(string: "de.contentpass.demo://oauth")!
-//    private static let discoveryUrl = URL(string: "https://my.contentpass.io")!
 
     var oidAuthState: OIDAuthStateWrapping? {
         didSet { didSetAuthState(oidAuthState) }
@@ -31,7 +27,6 @@ public class ContentPass: NSObject {
     public convenience init(clientId: String) {
         let authorizer = Authorizer(
             clientId: clientId,
-            clientSecret: ContentPass.clientSecret,
             clientRedirectUri: ContentPass.clientRedirectUri,
             discoveryUrl: ContentPass.discoveryUrl
         )
@@ -41,7 +36,6 @@ public class ContentPass: NSObject {
     convenience init(clientId: String, keychain: KeychainStoring) {
         let authorizer = Authorizer(
             clientId: clientId,
-            clientSecret: ContentPass.clientSecret,
             clientRedirectUri: ContentPass.clientRedirectUri,
             discoveryUrl: ContentPass.discoveryUrl
         )

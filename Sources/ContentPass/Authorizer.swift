@@ -3,7 +3,6 @@ import AppAuth
 
 class Authorizer: Authorizing {
     let clientId: String
-    let clientSecret: String?
     let clientRedirectUri: URL
     let discoveryUrl: URL
 
@@ -13,14 +12,13 @@ class Authorizer: Authorizing {
 
     private let client: OIDClientWrapping
 
-    init(clientId: String, clientSecret: String?, clientRedirectUri: URL, discoveryUrl: URL, client: OIDClientWrapping = OIDClientWrapper()) {
+    init(clientId: String, clientRedirectUri: URL, discoveryUrl: URL, client: OIDClientWrapping = OIDClientWrapper()) {
         defer {
             discoverConfiguration { [weak self] config, _ in
                 self?.oidServiceConfiguration = config
             }
         }
         self.clientId = clientId
-        self.clientSecret = clientSecret
         self.clientRedirectUri = clientRedirectUri
         self.discoveryUrl = discoveryUrl
         self.client = client
@@ -55,7 +53,7 @@ class Authorizer: Authorizing {
         return OIDAuthorizationRequest(
             configuration: configuration,
             clientId: clientId,
-            clientSecret: clientSecret,
+            clientSecret: nil,
             scopes: scopes,
             redirectURL: clientRedirectUri,
             responseType: OIDResponseTypeCode,
@@ -134,7 +132,12 @@ class Authorizer: Authorizing {
         return request
     }
 
-    private static func translateAuthorizationError(_ error: Error) -> Error {
-        return error
+    static func translateAuthorizationError(_ error: Error) -> Error {
+        let error = error as NSError
+        if error.domain == "org.openid.appauth.general" && error.code == -3 {
+            return ContentPassError.userCanceledAuthentication
+        } else {
+            return error
+        }
     }
 }

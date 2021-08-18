@@ -1,10 +1,3 @@
-//
-//  AppDelegate.swift
-//  ContentPassExample
-//
-//  Created by Paul Weber on 09.08.21.
-//
-
 import UIKit
 
 @main

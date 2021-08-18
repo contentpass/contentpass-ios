@@ -95,11 +95,9 @@ final class AuthorizerTests: XCTestCase {
     func testAuthorizeGeneratesCorrectAuthorizationRequest() {
         let dummyClient = MockedOIDClient()
         let clientId = UUID().uuidString
-        let clientSecret = UUID().uuidString
         let redirectUri = URL(string: "this.url.is.correct")!
         let authorizer = Authorizer(
             clientId: clientId,
-            clientSecret: clientSecret,
             clientRedirectUri: redirectUri,
             discoveryUrl: MockedOIDClient.validDiscoveryUrl,
             client: dummyClient
@@ -108,7 +106,6 @@ final class AuthorizerTests: XCTestCase {
         authorizer.authorize(presentingViewController: UIViewController()) { _ in }
 
         XCTAssertEqual(dummyClient.authRequest?.clientID, clientId)
-        XCTAssertEqual(dummyClient.authRequest?.clientSecret, clientSecret)
         XCTAssertEqual(dummyClient.authRequest?.redirectURL, redirectUri)
         XCTAssertEqual(dummyClient.authRequest?.scope, "openid offline_access contentpass")
         XCTAssertEqual(dummyClient.authRequest?.responseType, OIDResponseTypeCode)
@@ -189,5 +186,16 @@ final class AuthorizerTests: XCTestCase {
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 1)
+    }
+
+    func testErrorTranslationForUserCanceled() {
+        let error = NSError(domain: "org.openid.appauth.general", code: -3, userInfo: nil)
+        let translated = Authorizer.translateAuthorizationError(error)
+        switch translated {
+        case ContentPassError.userCanceledAuthentication:
+            break
+        default:
+            XCTFail("Error should have been translated")
+        }
     }
 }
