@@ -15,12 +15,12 @@
 		C285ABC526C15A0B0066844B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C285ABC426C15A0B0066844B /* AppDelegate.swift */; };
 		C285ABC726C15A0B0066844B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C285ABC626C15A0B0066844B /* SceneDelegate.swift */; };
 		C285ABC926C15A0B0066844B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C285ABC826C15A0B0066844B /* ViewController.swift */; };
-		C285ABCC26C15A0B0066844B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C285ABCA26C15A0B0066844B /* Main.storyboard */; };
 		C285ABCE26C15A0D0066844B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C285ABCD26C15A0D0066844B /* Assets.xcassets */; };
 		C285ABD126C15A0D0066844B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C285ABCF26C15A0D0066844B /* LaunchScreen.storyboard */; };
 		C285ABDC26C15A0D0066844B /* KeychainStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C285ABDB26C15A0D0066844B /* KeychainStoreTests.swift */; };
 		C285ABF826C17F650066844B /* MockedAuthState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C285ABF726C17F650066844B /* MockedAuthState.swift */; };
 		C2CDF15D26CD2E23001AD56B /* ContentPassTokenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2CDF15C26CD2E23001AD56B /* ContentPassTokenTests.swift */; };
+		C2CDF15F26CD5608001AD56B /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2CDF15E26CD5608001AD56B /* ViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,7 +42,6 @@
 		C285ABC426C15A0B0066844B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C285ABC626C15A0B0066844B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		C285ABC826C15A0B0066844B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		C285ABCB26C15A0B0066844B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		C285ABCD26C15A0D0066844B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C285ABD026C15A0D0066844B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C285ABD226C15A0D0066844B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -51,6 +50,7 @@
 		C285ABDD26C15A0D0066844B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C285ABF726C17F650066844B /* MockedAuthState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockedAuthState.swift; sourceTree = "<group>"; };
 		C2CDF15C26CD2E23001AD56B /* ContentPassTokenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentPassTokenTests.swift; sourceTree = "<group>"; };
+		C2CDF15E26CD5608001AD56B /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,7 +106,7 @@
 				C285ABC426C15A0B0066844B /* AppDelegate.swift */,
 				C285ABC626C15A0B0066844B /* SceneDelegate.swift */,
 				C285ABC826C15A0B0066844B /* ViewController.swift */,
-				C285ABCA26C15A0B0066844B /* Main.storyboard */,
+				C2CDF15E26CD5608001AD56B /* ViewModel.swift */,
 				C285ABCD26C15A0D0066844B /* Assets.xcassets */,
 				C285ABCF26C15A0D0066844B /* LaunchScreen.storyboard */,
 				C285ABD226C15A0D0066844B /* Info.plist */,
@@ -222,7 +222,6 @@
 			files = (
 				C285ABD126C15A0D0066844B /* LaunchScreen.storyboard in Resources */,
 				C285ABCE26C15A0D0066844B /* Assets.xcassets in Resources */,
-				C285ABCC26C15A0B0066844B /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -242,6 +241,7 @@
 			files = (
 				C285ABC926C15A0B0066844B /* ViewController.swift in Sources */,
 				C285ABC526C15A0B0066844B /* AppDelegate.swift in Sources */,
+				C2CDF15F26CD5608001AD56B /* ViewModel.swift in Sources */,
 				C285ABC726C15A0B0066844B /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -271,14 +271,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		C285ABCA26C15A0B0066844B /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				C285ABCB26C15A0B0066844B /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		C285ABCF26C15A0D0066844B /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
