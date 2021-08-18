@@ -6,14 +6,15 @@ class Convenience {
         clientId: String = "",
         clientSecret: String? = nil,
         redirectUrl: URL = URL(string: "dummy.url")!,
-        discoveryUrl: URL = MockedOIDClient.validDiscoveryUrl
+        discoveryUrl: URL = MockedOIDClient.validDiscoveryUrl,
+        client: OIDClientWrapping = MockedOIDClient()
     ) -> Authorizer {
         return Authorizer(
             clientId: clientId,
             clientSecret: clientSecret,
             clientRedirectUri: redirectUrl,
-            discoveryUrl: MockedOIDClient.validDiscoveryUrl,
-            client: MockedOIDClient()
+            discoveryUrl: discoveryUrl,
+            client: client
         )
     }
 }
