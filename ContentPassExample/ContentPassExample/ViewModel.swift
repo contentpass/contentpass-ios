@@ -12,6 +12,7 @@ class ViewModel {
         defer {
             contentPass.delegate = self
         }
+
         self.contentPass = contentPass
     }
 
