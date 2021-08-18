@@ -150,8 +150,17 @@ public class ContentPass: NSObject {
     private func didSetAuthState(_ authState: OIDAuthStateWrapping?) {
         oidAuthState?.errorDelegate = delegateWrapper
         oidAuthState?.stateChangeDelegate = delegateWrapper
-        guard let authState = authState else { return }
-        didChange(authState)
+
+        if let authState = authState {
+            didChange(authState)
+        } else {
+            keychain.deleteAuthState()
+            state = .unauthenticated
+        }
+    }
+
+    public func logout() {
+        oidAuthState = nil
     }
 }
 

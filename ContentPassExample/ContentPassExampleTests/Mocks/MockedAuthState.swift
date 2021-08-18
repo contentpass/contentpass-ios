@@ -25,7 +25,7 @@ class MockedAuthState: NSObject, OIDAuthStateWrapping {
     static func createRandom() -> MockedAuthState {
         let state = MockedAuthState()
         state.accessToken = UUID().uuidString
-        state.accessTokenExpirationDate = Date()
+        state.accessTokenExpirationDate = Date(timeIntervalSinceNow: 5)
         state.idToken = UUID().uuidString
         state.isAuthorized = true
         state.refreshToken = UUID().uuidString
