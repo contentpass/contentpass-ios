@@ -20,6 +20,7 @@
 		C285ABD126C15A0D0066844B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C285ABCF26C15A0D0066844B /* LaunchScreen.storyboard */; };
 		C285ABDC26C15A0D0066844B /* KeychainStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C285ABDB26C15A0D0066844B /* KeychainStoreTests.swift */; };
 		C285ABF826C17F650066844B /* MockedAuthState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C285ABF726C17F650066844B /* MockedAuthState.swift */; };
+		C2CDF15D26CD2E23001AD56B /* ContentPassTokenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2CDF15C26CD2E23001AD56B /* ContentPassTokenTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,7 @@
 		C285ABDB26C15A0D0066844B /* KeychainStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStoreTests.swift; sourceTree = "<group>"; };
 		C285ABDD26C15A0D0066844B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C285ABF726C17F650066844B /* MockedAuthState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockedAuthState.swift; sourceTree = "<group>"; };
+		C2CDF15C26CD2E23001AD56B /* ContentPassTokenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentPassTokenTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,6 +123,7 @@
 				C20AEC5326C18DC8003F07CB /* AuthorizerTests.swift */,
 				C20AEC5A26C19DC3003F07CB /* ContentPassTests.swift */,
 				C23FE5FF26CD1DB2008EC0B4 /* Convenience.swift */,
+				C2CDF15C26CD2E23001AD56B /* ContentPassTokenTests.swift */,
 			);
 			path = ContentPassExampleTests;
 			sourceTree = "<group>";
@@ -249,6 +252,7 @@
 			files = (
 				C20AEC5426C18DC8003F07CB /* AuthorizerTests.swift in Sources */,
 				C23FE60026CD1DB2008EC0B4 /* Convenience.swift in Sources */,
+				C2CDF15D26CD2E23001AD56B /* ContentPassTokenTests.swift in Sources */,
 				C20AEC5B26C19DC3003F07CB /* ContentPassTests.swift in Sources */,
 				C285ABF826C17F650066844B /* MockedAuthState.swift in Sources */,
 				C20AEC5626C19C3A003F07CB /* MockedOIDClient.swift in Sources */,

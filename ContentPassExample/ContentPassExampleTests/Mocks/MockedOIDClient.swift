@@ -85,7 +85,7 @@ class MockedOIDClient: OIDClientWrapping {
     }
 
     private func generateSuccessData(completionHandler: @escaping (Data?, Error?) -> Void) {
-        let response = Authorizer.ContentPassTokenResponse(contentpassToken: "eyJhbGciOiJSUzI1NiJ9.eyJhdXRoIjp0cnVlLCJwbGFucyI6WyJjYTQ5MmFmNy0zMjBjLTQyYzktOWJhMC1iMmEzM2NmY2EzMDciXSwiYXVkIjoiNjliMjg5ODUiLCJpYXQiOjE2Mjg3NjYyOTIsImV4cCI6MTYyODk0MjY5Mn0")
+        let response = ContentPassTokenResponse(contentpassToken: ContentPassTokenTests.validToken)
         let encoder = JSONEncoder()
         encoder.keyEncodingStrategy = .convertToSnakeCase
 

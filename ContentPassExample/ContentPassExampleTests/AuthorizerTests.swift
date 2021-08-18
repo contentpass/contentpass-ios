@@ -115,20 +115,6 @@ final class AuthorizerTests: XCTestCase {
         XCTAssertEqual(dummyClient.authRequest?.additionalParameters, ["cp_route": "login", "prompt": "consent"])
     }
 
-    func testContentPassTokenInitialization() {
-        let testToken = "eyJhbGciOiJSUzI1NiJ9.eyJhdXRoIjp0cnVlLCJwbGFucyI6WyJjYTQ5MmFmNy0zMjBjLTQyYzktOWJhMC1iMmEzM2NmY2EzMDciXSwiYXVkIjoiNjliMjg5ODUiLCJpYXQiOjE2Mjg3NjYyOTIsImV4cCI6MTYyODk0MjY5Mn0"
-
-        let decodedToken = Authorizer.ContentPassToken(tokenString: testToken)
-
-        XCTAssertNotNil(decodedToken)
-        XCTAssertEqual(decodedToken?.header.alg, "RS256")
-        XCTAssertEqual(decodedToken?.body.plans, ["ca492af7-320c-42c9-9ba0-b2a33cfca307"])
-        XCTAssertEqual(decodedToken?.body.aud, "69b28985")
-        XCTAssertEqual(decodedToken?.body.auth, true)
-        XCTAssertEqual(decodedToken?.body.iat, Date(timeIntervalSince1970: 1628766292))
-        XCTAssertEqual(decodedToken?.body.exp, Date(timeIntervalSince1970: 1628942692))
-    }
-
     func testValidateSubscriptionBubblesUpDiscoveyError() {
         let dummyClient = MockedOIDClient()
         let authorizer = Convenience.createDummyAuthorizer(discoveryUrl: MockedOIDClient.errorDiscoveryUrl, client: dummyClient)
@@ -145,7 +131,7 @@ final class AuthorizerTests: XCTestCase {
             }
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 10.0)
+        wait(for: [expectation], timeout: 1)
     }
 
     func testValidateSubscriptionBubblesUpUnderlyingError() {
@@ -164,7 +150,7 @@ final class AuthorizerTests: XCTestCase {
             }
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 10.0)
+        wait(for: [expectation], timeout: 1)
     }
 
     func testValidateSubscriptionRequestCreation() {
@@ -183,7 +169,7 @@ final class AuthorizerTests: XCTestCase {
             }
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 10.0)
+        wait(for: [expectation], timeout: 1)
     }
 
     func testValidateSubscriptionDataCorruptionError() {
@@ -191,7 +177,7 @@ final class AuthorizerTests: XCTestCase {
         let authorizer = Convenience.createDummyAuthorizer(clientId: "data_corruption", client: dummyClient)
 
         let expectation = XCTestExpectation(description: "Wait for completionHandler")
-        authorizer.validateSubscription(idToken: "expected_this_id_token") { result in
+        authorizer.validateSubscription(idToken: "") { result in
             switch result {
             case .success:
                 XCTFail("this should have resulted in an error")
@@ -202,6 +188,6 @@ final class AuthorizerTests: XCTestCase {
             }
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 10.0)
+        wait(for: [expectation], timeout: 1)
     }
 }
