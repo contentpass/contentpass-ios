@@ -5,6 +5,7 @@ public enum ContentPassError: Error {
     case corruptedResponseFromWeb
     case badHTTPStatusCode(Int)
     case oidAuthenticatedButMissingIdToken
+    case userCanceledAuthentication
 
     public enum UnexpectedState {
         case missingSubscriptionData

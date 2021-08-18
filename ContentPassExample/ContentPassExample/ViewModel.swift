@@ -21,11 +21,12 @@ class ViewModel {
             case .success:
                 break
             case .failure(let error):
-                let nsError = error as NSError
                 let errorMessage: String
-                if nsError.domain == "org.openid.appauth.general" && nsError.code == -3 {
-                    errorMessage = "User cancelled authentication."
-                } else {
+
+                switch error {
+                case ContentPassError.userCanceledAuthentication:
+                    errorMessage = "User canceled authentication."
+                default:
                     errorMessage = "\(error)"
                 }
 

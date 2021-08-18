@@ -190,4 +190,15 @@ final class AuthorizerTests: XCTestCase {
         }
         wait(for: [expectation], timeout: 1)
     }
+
+    func testErrorTranslationForUserCanceled() {
+        let error = NSError(domain: "org.openid.appauth.general", code: -3, userInfo: nil)
+        let translated = Authorizer.translateAuthorizationError(error)
+        switch translated {
+        case ContentPassError.userCanceledAuthentication:
+            break
+        default:
+            XCTFail("Error should have been translated")
+        }
+    }
 }

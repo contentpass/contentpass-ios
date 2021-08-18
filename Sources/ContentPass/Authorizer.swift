@@ -134,7 +134,12 @@ class Authorizer: Authorizing {
         return request
     }
 
-    private static func translateAuthorizationError(_ error: Error) -> Error {
-        return error
+    static func translateAuthorizationError(_ error: Error) -> Error {
+        let error = error as NSError
+        if error.domain == "org.openid.appauth.general" && error.code == -3 {
+            return ContentPassError.userCanceledAuthentication
+        } else {
+            return error
+        }
     }
 }
