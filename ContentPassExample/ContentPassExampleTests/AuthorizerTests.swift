@@ -5,56 +5,40 @@ import AppAuth
 final class AuthorizerTests: XCTestCase {
     func testInitializationRunsConfigurationDiscoveryWithCorrectUrl() {
         let dummyClient = MockedOIDClient()
-        _ = Authorizer(
-            clientId: "",
-            clientSecret: nil,
-            clientRedirectUri: URL(string: "dummy.url")!,
-            discoveryUrl: MockedOIDClient.validDiscoveryUrl,
-            client: dummyClient
-        )
+
+        _ = Convenience.createDummyAuthorizer(client: dummyClient)
+
         XCTAssert(dummyClient.didReturnConfiguration)
         XCTAssertEqual(dummyClient.discoveryUrl, MockedOIDClient.validDiscoveryUrl)
     }
 
     func testAuthorizeRunsConfigurationDiscoveryIfNeeded() {
         let dummyClient = MockedOIDClient()
-        let authorizer = Authorizer(
-            clientId: "",
-            clientSecret: nil,
-            clientRedirectUri: URL(string: "dummy.url")!,
-            discoveryUrl: MockedOIDClient.flakyDiscoveryUrl,
-            client: dummyClient
-        )
+        let authorizer = Convenience.createDummyAuthorizer(discoveryUrl: MockedOIDClient.flakyDiscoveryUrl, client: dummyClient)
+
         XCTAssert(!dummyClient.didReturnConfiguration)
+
         authorizer.authorize(presentingViewController: UIViewController()) { _ in }
+
         XCTAssertEqual(dummyClient.discoveryUrl, MockedOIDClient.validDiscoveryUrl)
         XCTAssert(dummyClient.didReturnConfiguration)
     }
 
     func testAuthorizeDoesNotRunDiscoveryIfConfigurationPresent() {
         let dummyClient = MockedOIDClient()
-        let authorizer = Authorizer(
-            clientId: "",
-            clientSecret: nil,
-            clientRedirectUri: URL(string: "dummy.url")!,
-            discoveryUrl: MockedOIDClient.validDiscoveryUrl,
-            client: dummyClient
-        )
+        let authorizer = Convenience.createDummyAuthorizer(client: dummyClient)
         let preAuthorize = dummyClient.calledCounter
+
         authorizer.authorize(presentingViewController: UIViewController(), completionHandler: { _ in })
+
         XCTAssertEqual(preAuthorize, dummyClient.calledCounter)
         XCTAssertEqual(dummyClient.calledCounter, 1)
     }
 
     func testAuthorizeBubblesUpDiscoveryError() {
         let dummyClient = MockedOIDClient()
-        let authorizer = Authorizer(
-            clientId: "",
-            clientSecret: nil,
-            clientRedirectUri: URL(string: "dummy.url")!,
-            discoveryUrl: MockedOIDClient.errorDiscoveryUrl,
-            client: dummyClient
-        )
+        let authorizer = Convenience.createDummyAuthorizer(discoveryUrl: MockedOIDClient.errorDiscoveryUrl, client: dummyClient)
+
         let expectation = XCTestExpectation(description: "Wait for completionHandler")
         authorizer.authorize(presentingViewController: UIViewController()) { result in
             switch result {
@@ -72,13 +56,8 @@ final class AuthorizerTests: XCTestCase {
 
     func testAuthorizeBubblesUpUnderlyingError() {
         let dummyClient = MockedOIDClient()
-        let authorizer = Authorizer(
-            clientId: MockedOIDClient.errorInAuthorizationClientId,
-            clientSecret: nil,
-            clientRedirectUri: URL(string: "dummy.url")!,
-            discoveryUrl: MockedOIDClient.validDiscoveryUrl,
-            client: dummyClient
-        )
+        let authorizer = Convenience.createDummyAuthorizer(clientId: MockedOIDClient.errorInAuthorizationClientId, client: dummyClient)
+
         let expectation = XCTestExpectation(description: "Wait for completionHandler")
         authorizer.authorize(presentingViewController: UIViewController()) { result in
             switch result {
@@ -96,13 +75,8 @@ final class AuthorizerTests: XCTestCase {
 
     func testAuthorizeReturnsUnexpectedStateCorrectly() {
         let dummyClient = MockedOIDClient()
-        let authorizer = Authorizer(
-            clientId: MockedOIDClient.unexpectedClientId,
-            clientSecret: nil,
-            clientRedirectUri: URL(string: "dummy.url")!,
-            discoveryUrl: MockedOIDClient.validDiscoveryUrl,
-            client: dummyClient
-        )
+        let authorizer = Convenience.createDummyAuthorizer(clientId: MockedOIDClient.unexpectedClientId, client: dummyClient)
+
         let expectation = XCTestExpectation(description: "Wait for completionHandler")
         authorizer.authorize(presentingViewController: UIViewController()) { result in
             switch result {
@@ -123,7 +97,6 @@ final class AuthorizerTests: XCTestCase {
         let clientId = UUID().uuidString
         let clientSecret = UUID().uuidString
         let redirectUri = URL(string: "this.url.is.correct")!
-
         let authorizer = Authorizer(
             clientId: clientId,
             clientSecret: clientSecret,
@@ -131,7 +104,9 @@ final class AuthorizerTests: XCTestCase {
             discoveryUrl: MockedOIDClient.validDiscoveryUrl,
             client: dummyClient
         )
+
         authorizer.authorize(presentingViewController: UIViewController()) { _ in }
+
         XCTAssertEqual(dummyClient.authRequest?.clientID, clientId)
         XCTAssertEqual(dummyClient.authRequest?.clientSecret, clientSecret)
         XCTAssertEqual(dummyClient.authRequest?.redirectURL, redirectUri)
@@ -144,6 +119,7 @@ final class AuthorizerTests: XCTestCase {
         let testToken = "eyJhbGciOiJSUzI1NiJ9.eyJhdXRoIjp0cnVlLCJwbGFucyI6WyJjYTQ5MmFmNy0zMjBjLTQyYzktOWJhMC1iMmEzM2NmY2EzMDciXSwiYXVkIjoiNjliMjg5ODUiLCJpYXQiOjE2Mjg3NjYyOTIsImV4cCI6MTYyODk0MjY5Mn0"
 
         let decodedToken = Authorizer.ContentPassToken(tokenString: testToken)
+
         XCTAssertNotNil(decodedToken)
         XCTAssertEqual(decodedToken?.header.alg, "RS256")
         XCTAssertEqual(decodedToken?.body.plans, ["ca492af7-320c-42c9-9ba0-b2a33cfca307"])
@@ -155,13 +131,8 @@ final class AuthorizerTests: XCTestCase {
 
     func testValidateSubscriptionBubblesUpDiscoveyError() {
         let dummyClient = MockedOIDClient()
-        let authorizer = Authorizer(
-            clientId: "",
-            clientSecret: nil,
-            clientRedirectUri: URL(string: "dummy.url")!,
-            discoveryUrl: MockedOIDClient.errorDiscoveryUrl,
-            client: dummyClient
-        )
+        let authorizer = Convenience.createDummyAuthorizer(discoveryUrl: MockedOIDClient.errorDiscoveryUrl, client: dummyClient)
+
         let expectation = XCTestExpectation(description: "Wait for completionHandler")
         authorizer.validateSubscription(idToken: "") { result in
             switch result {
@@ -179,13 +150,8 @@ final class AuthorizerTests: XCTestCase {
 
     func testValidateSubscriptionBubblesUpUnderlyingError() {
         let dummyClient = MockedOIDClient()
-        let authorizer = Authorizer(
-            clientId: "underlying_error",
-            clientSecret: nil,
-            clientRedirectUri: URL(string: "dummy.url")!,
-            discoveryUrl: MockedOIDClient.validDiscoveryUrl,
-            client: dummyClient
-        )
+        let authorizer = Convenience.createDummyAuthorizer(clientId: "underlying_error", client: dummyClient)
+
         let expectation = XCTestExpectation(description: "Wait for completionHandler")
         authorizer.validateSubscription(idToken: "") { result in
             switch result {
@@ -203,13 +169,8 @@ final class AuthorizerTests: XCTestCase {
 
     func testValidateSubscriptionRequestCreation() {
         let dummyClient = MockedOIDClient()
-        let authorizer = Authorizer(
-            clientId: "test_creation",
-            clientSecret: nil,
-            clientRedirectUri: URL(string: "dummy.url")!,
-            discoveryUrl: MockedOIDClient.validDiscoveryUrl,
-            client: dummyClient
-        )
+        let authorizer = Convenience.createDummyAuthorizer(clientId: "test_creation", client: dummyClient)
+
         let expectation = XCTestExpectation(description: "Wait for completionHandler")
         authorizer.validateSubscription(idToken: "expected_this_id_token") { result in
             switch result {
@@ -227,13 +188,8 @@ final class AuthorizerTests: XCTestCase {
 
     func testValidateSubscriptionDataCorruptionError() {
         let dummyClient = MockedOIDClient()
-        let authorizer = Authorizer(
-            clientId: "data_corruption",
-            clientSecret: nil,
-            clientRedirectUri: URL(string: "dummy.url")!,
-            discoveryUrl: MockedOIDClient.validDiscoveryUrl,
-            client: dummyClient
-        )
+        let authorizer = Convenience.createDummyAuthorizer(clientId: "data_corruption", client: dummyClient)
+
         let expectation = XCTestExpectation(description: "Wait for completionHandler")
         authorizer.validateSubscription(idToken: "expected_this_id_token") { result in
             switch result {
