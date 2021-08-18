@@ -52,7 +52,6 @@ public class ContentPass: NSObject {
         defer {
             delegateWrapper.delegate = self
             validateAuthState()
-            didSetAuthState(oidAuthState)
         }
 
         self.clientId = clientId
@@ -61,8 +60,10 @@ public class ContentPass: NSObject {
 
         if let authState = keychain.retrieveAuthState() {
             oidAuthState = authState
+            oidAuthState?.errorDelegate = delegateWrapper
+            oidAuthState?.stateChangeDelegate = delegateWrapper
         } else {
-            state = .unauthorized
+            state = .unauthenticated
         }
 
         super.init()
@@ -74,17 +75,36 @@ public class ContentPass: NSObject {
             authState.isAuthorized,
             let validUntil = authState.accessTokenExpirationDate
         else {
-            state = .unauthorized
+            state = .unauthenticated
             return
         }
 
         let timeInterval = validUntil.timeIntervalSinceNow
 
         if authState.isAuthorized && timeInterval > 0 {
-            state = .authorized
+            validateSubscription()
             setRefreshTimer(delay: timeInterval)
         } else {
             doTokenRefresh()
+        }
+    }
+
+    private func validateSubscription() {
+        guard
+            oidAuthState?.isAuthorized ?? false,
+            let idToken = oidAuthState?.idToken
+        else {
+            state = .error(ContentPassError.oidAuthenticatedButMissingIdToken)
+            return
+        }
+
+        authorizer.validateSubscription(idToken: idToken) { [weak self] result in
+            switch result {
+            case .success(let isValid):
+                self?.state = .authenticated(hasValidSubscription: isValid)
+            case .failure(let error):
+                self?.state = .error(error)
+            }
         }
     }
 
@@ -103,7 +123,7 @@ public class ContentPass: NSObject {
     @objc
     private func doTokenRefresh() {
         guard let authState = oidAuthState else {
-            state = .unauthorized
+            state = .unauthenticated
             return
         }
         authState.performTokenRefresh()
@@ -121,6 +141,9 @@ public class ContentPass: NSObject {
     }
 
     private func didSetState(_ state: State) {
+        if state == .unauthenticated {
+            keychain.deleteAuthState()
+        }
         delegate?.onStateChanged(contentPass: self, newState: state)
     }
 
@@ -135,13 +158,12 @@ public class ContentPass: NSObject {
 extension ContentPass: OIDDelegateWrapperDelegate {
     func didChange(_ state: OIDAuthStateWrapping) {
         if state.isAuthorized {
-            self.state = .authorized
+            validateSubscription()
             guard let refreshDelay = state.accessTokenExpirationDate?.timeIntervalSinceNow else { return }
             setRefreshTimer(delay: refreshDelay)
             keychain.storeAuthState(state)
         } else {
-            self.state = .unauthorized
-            keychain.deleteAuthState()
+            self.state = .unauthenticated
         }
     }
 

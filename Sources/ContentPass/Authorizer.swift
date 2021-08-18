@@ -11,7 +11,7 @@ class Authorizer: Authorizing {
 
     private let scopes = ["openid", "offline_access", "contentpass"]
 
-    private var client: OIDClientWrapping
+    private let client: OIDClientWrapping
 
     init(clientId: String, clientSecret: String?, clientRedirectUri: URL, discoveryUrl: URL, client: OIDClientWrapping = OIDClientWrapper()) {
         defer {
@@ -59,7 +59,7 @@ class Authorizer: Authorizing {
             scopes: scopes,
             redirectURL: clientRedirectUri,
             responseType: OIDResponseTypeCode,
-            additionalParameters: ["cp_route": "login"]
+            additionalParameters: ["cp_route": "login", "prompt": "consent"]
         )
     }
 
@@ -85,6 +85,53 @@ class Authorizer: Authorizing {
         } catch let error {
             completionHandler(.failure(error))
         }
+    }
+
+    func validateSubscription(idToken: String, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
+        if let configuration = oidServiceConfiguration {
+            doValidateSubscription(idToken: idToken, tokenUrl: configuration.tokenEndpoint, completionHandler: completionHandler)
+        } else {
+            discoverConfiguration { [weak self] configuration, error in
+                if let error = error {
+                    completionHandler(.failure(error))
+                } else if let configuration = configuration {
+                    self?.oidServiceConfiguration = configuration
+                    self?.doValidateSubscription(idToken: idToken, tokenUrl: configuration.tokenEndpoint, completionHandler: completionHandler)
+                } else {
+                    completionHandler(.failure(ContentPassError.unexpectedState(.missingConfigurationAfterDiscovery)))
+                }
+            }
+        }
+    }
+
+    private func doValidateSubscription(idToken: String, tokenUrl: URL, completionHandler: @escaping (Result<Bool, Error>) -> Void) {
+        let request = createValidateSubscriptionRequest(idToken: idToken, tokenUrl: tokenUrl)
+        client.fireValidationRequest(request) { data, error in
+            if let error = error {
+                completionHandler(.failure(error))
+            } else if let data = data {
+                let decoder = JSONDecoder()
+                decoder.keyDecodingStrategy = .convertFromSnakeCase
+                guard
+                    let parsedResponse = try? decoder.decode(ContentPassTokenResponse.self, from: data),
+                    let contentPassToken = ContentPassToken(tokenString: parsedResponse.contentpassToken)
+                else {
+                    completionHandler(.failure(ContentPassError.subscriptionDataCorrupted))
+                    return
+                }
+                completionHandler(.success(contentPassToken.isSubscriptionValid))
+            } else {
+                completionHandler(.failure(ContentPassError.unexpectedState(.missingSubscriptionData)))
+            }
+        }
+    }
+
+    private func createValidateSubscriptionRequest(idToken: String, tokenUrl: URL) -> URLRequest {
+        var request = URLRequest(url: tokenUrl)
+        request.httpMethod = "POST"
+        let body = "grant_type=contentpass_token&subject_token=\(idToken)&client_id=\(clientId)"
+        request.httpBody = body.data(using: .utf8)
+        return request
     }
 
     private static func translateAuthorizationError(_ error: Error) -> Error {

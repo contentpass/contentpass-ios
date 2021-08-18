@@ -58,4 +58,48 @@ class MockedOIDClient: OIDClientWrapping {
             completionHandler(shouldReturnAuthState ?? MockedAuthState.createRandom(), nil)
         }
     }
+
+    func fireValidationRequest(_ validationRequest: URLRequest, completionHandler: @escaping (Data?, Error?) -> Void) {
+        guard
+            let postBody = validationRequest.httpBody,
+            let postString = String(data: postBody, encoding: .utf8)
+        else {
+            completionHandler(nil, ValidationTestError.missingPostBody)
+            return
+        }
+
+        if postString.contains("client_id=test_creation") {
+            let expected = "grant_type=contentpass_token&subject_token=expected_this_id_token&client_id=test_creation"
+            if postString == expected {
+                generateSuccessData(completionHandler: completionHandler)
+            } else {
+                completionHandler(nil, ValidationTestError.requestCreationFailure)
+            }
+        } else if postString.contains("client_id=data_corruption") {
+            completionHandler(Data(), nil)
+        } else if postString.contains("client_id=underlying_error") {
+            completionHandler(nil, ValidationTestError.underlyingError)
+        } else {
+            generateSuccessData(completionHandler: completionHandler)
+        }
+    }
+
+    private func generateSuccessData(completionHandler: @escaping (Data?, Error?) -> Void) {
+        let response = ContentPassTokenResponse(contentpassToken: ContentPassTokenTests.validToken)
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+
+        if let data = try? encoder.encode(response) {
+            completionHandler(data, nil)
+        } else {
+            completionHandler(nil, ValidationTestError.jsonEncodingFailed)
+        }
+    }
+
+    enum ValidationTestError: Error {
+        case missingPostBody
+        case requestCreationFailure
+        case underlyingError
+        case jsonEncodingFailed
+    }
 }

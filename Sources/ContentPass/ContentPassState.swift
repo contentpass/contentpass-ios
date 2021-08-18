@@ -3,8 +3,8 @@
 extension ContentPass {
     public enum State: Equatable {
         case initializing
-        case unauthorized
-        case authorized
+        case unauthenticated
+        case authenticated(hasValidSubscription: Bool)
         case error(Error)
 
         public static func == (lhs: ContentPass.State, rhs: ContentPass.State) -> Bool {
@@ -16,9 +16,9 @@ extension ContentPass {
                 default:
                     return false
                 }
-            case .authorized:
+            case .authenticated:
                 switch rhs {
-                case .authorized:
+                case .authenticated:
                     return true
                 default:
                     return false
@@ -30,9 +30,9 @@ extension ContentPass {
                 default:
                     return false
                 }
-            case .unauthorized:
+            case .unauthenticated:
                 switch rhs {
-                case .unauthorized:
+                case .unauthenticated:
                     return true
                 default:
                     return false
