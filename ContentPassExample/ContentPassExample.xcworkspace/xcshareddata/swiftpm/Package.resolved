@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "AppAuth",
+        "repositoryURL": "https://github.com/openid/AppAuth-iOS",
+        "state": {
+          "branch": null,
+          "revision": "01131d68346c8ae552961c768d583c715fbe1410",
+          "version": "1.4.0"
+        }
+      },
+      {
+        "package": "Strongbox",
+        "repositoryURL": "https://github.com/granoff/Strongbox",
+        "state": {
+          "branch": null,
+          "revision": "455e1d9a2775f2265c99bb611c7fa0e092734a04",
+          "version": "0.6.1"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

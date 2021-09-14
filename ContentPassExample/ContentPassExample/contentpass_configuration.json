@@ -1,0 +1,6 @@
+{
+    "schema_version": 1,
+    "base_url": "https://contentpass.de",
+    "redirect_uri": "de.contentpass://oauth",
+    "property_id": "85ff2a2a-54f7-4da1-97af-9752572396ab"
+}
