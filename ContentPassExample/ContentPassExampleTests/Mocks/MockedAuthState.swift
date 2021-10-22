@@ -18,7 +18,7 @@ class MockedAuthState: NSObject, OIDAuthStateWrapping {
     weak var stateChangeDelegate: OIDAuthStateChangeDelegate?
     var wasTokenRefreshPerformed = false
 
-    func performTokenRefresh() {
+    func performTokenRefresh(errorHandler: @escaping (Error) -> Void) {
         wasTokenRefreshPerformed = true
     }
 

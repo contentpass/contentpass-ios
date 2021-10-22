@@ -6,6 +6,7 @@ class ViewController: UIViewController {
     private let subscriptionLabel = UILabel()
     private let loginButton = UIButton(type: .system)
     private let logoutButton = UIButton(type: .system)
+    private let recoverButton = UIButton(type: .system)
 
     private var cancelBag = Set<AnyCancellable>()
 
@@ -37,12 +38,11 @@ class ViewController: UIViewController {
         view.backgroundColor = .white
         loginButton.setTitle("Login", for: .normal)
         logoutButton.setTitle("Logout", for: .normal)
+        recoverButton.setTitle("Recover from error", for: .normal)
     }
 
     private func setupLayout() {
-        let buttonStack = UIStackView(arrangedSubviews: [loginButton, logoutButton])
-        buttonStack.axis = .horizontal
-        let stack = UIStackView(arrangedSubviews: [authenticatedLabel, subscriptionLabel, buttonStack])
+        let stack = UIStackView(arrangedSubviews: [authenticatedLabel, subscriptionLabel, loginButton, logoutButton, recoverButton])
         stack.axis = .vertical
         stack.translatesAutoresizingMaskIntoConstraints = false
 
@@ -56,6 +56,7 @@ class ViewController: UIViewController {
     private func setupBindings() {
         loginButton.addTarget(self, action: #selector(onLoginClicked), for: .touchUpInside)
         logoutButton.addTarget(self, action: #selector(onLogoutClicked), for: .touchUpInside)
+        recoverButton.addTarget(self, action: #selector(onRecoverClicked), for: .touchUpInside)
 
         viewModel.$isAuthenticated
             .receive(on: DispatchQueue.main)
@@ -73,6 +74,12 @@ class ViewController: UIViewController {
             .map { "Has valid subscription: \($0)" }
             .assign(to: \.text, on: subscriptionLabel)
             .store(in: &cancelBag)
+
+        viewModel.$isError
+            .receive(on: DispatchQueue.main)
+            .map(!)
+            .assign(to: \.isHidden, on: recoverButton)
+            .store(in: &cancelBag)
     }
 
     @objc
@@ -83,5 +90,10 @@ class ViewController: UIViewController {
     @objc
     private func onLogoutClicked() {
         viewModel.logout()
+    }
+
+    @objc
+    private func onRecoverClicked() {
+        viewModel.recoverFromError()
     }
 }

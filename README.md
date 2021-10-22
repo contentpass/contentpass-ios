@@ -148,6 +148,17 @@ We have our own `ContentPassError` enum for the following cases:
 We also bubble up underlying errors that may occur because of connectivity problems or other issues regarding the OAuth flow.
 With these errors it's best practice to cast them to `NSError` and look up the error's `domain` and `code` on your favorite search engine.
 
+### Recovering from network errors
+
+Sometimes we encounter an error state while refreshing the tokens in the background due to bad or no internet connection.
+Since we don't monitor the device's connection state you need to tell the SDK that the network connection has been reestablished / improved. We will then refresh and revalidate the user's authentication tokens.
+
+```swift
+contentPass.recoverFromError()
+```
+
+
+
 ## License
 
 [MIT licensed](https://github.com/contentpass/contentpass-ios/blob/main/LICENSE)
