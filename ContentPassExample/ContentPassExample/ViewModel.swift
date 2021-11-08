@@ -7,6 +7,7 @@ class ViewModel {
 
     @Published var isAuthenticated = false
     @Published var hasValidSubscription = false
+    @Published var isError = false
 
     init(contentPass: ContentPass) {
         defer {
@@ -43,6 +44,10 @@ class ViewModel {
     func logout() {
         contentPass.logout()
     }
+
+    func recoverFromError() {
+        contentPass.recoverFromError()
+    }
 }
 
 extension ViewModel: ContentPassDelegate {
@@ -51,13 +56,16 @@ extension ViewModel: ContentPassDelegate {
         case .initializing, .unauthenticated:
             isAuthenticated = false
             hasValidSubscription = false
+            isError = false
         case .error(let error):
             print(error)
             isAuthenticated = false
             hasValidSubscription = false
+            isError = true
         case .authenticated(let sub):
             isAuthenticated = true
             hasValidSubscription = sub
+            isError = false
         }
     }
 }

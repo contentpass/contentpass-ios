@@ -26,7 +26,7 @@ or
 * Add the following `dependency` to your `Package.swift`:
 ```swift
 dependencies: [
-    .package(url: "https://github.com/contentpass/contentpass-ios", .upToNextMajor(from: "1.0.0"))
+    .package(url: "https://github.com/contentpass/contentpass-ios", .upToNextMajor(from: "1.1.0"))
 ]
 ```
 
@@ -38,7 +38,7 @@ In both cases don't forget to add the sdk to your targets.
 
 With [CocoaPods](https://guides.cocoapods.org/using/getting-started.html), add the following line to your `Podfile`:
 ```ruby
-  pod 'ContentPass', '~> 1.0.0'
+  pod 'ContentPass', '~> 1.1.0'
 ```
 
 Then, run `pod install` via terminal.
@@ -147,6 +147,17 @@ We have our own `ContentPassError` enum for the following cases:
 
 We also bubble up underlying errors that may occur because of connectivity problems or other issues regarding the OAuth flow.
 With these errors it's best practice to cast them to `NSError` and look up the error's `domain` and `code` on your favorite search engine.
+
+### Recovering from network errors
+
+Sometimes we encounter an error state while refreshing the tokens in the background due to bad or no internet connection.
+Since we don't monitor the device's connection state you need to tell the SDK that the network connection has been reestablished / improved. We will then refresh and revalidate the user's authentication tokens.
+
+```swift
+contentPass.recoverFromError()
+```
+
+
 
 ## License
 

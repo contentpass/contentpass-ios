@@ -1,13 +1,16 @@
 import AppAuth
 
 extension OIDAuthState: OIDAuthStateWrapping {
-    func performTokenRefresh() {
+    func performTokenRefresh(errorHandler: @escaping (Error) -> Void) {
         assert(errorDelegate != nil)
         assert(stateChangeDelegate != nil)
 
         setNeedsTokenRefresh()
-        // no completion handling needed because we implement the delegates
-        performAction(freshTokens: { _, _, _ in })
+
+        performAction { _, _, error in
+            guard let error = error else { return }
+            errorHandler(error)
+        }
     }
 
     var tokenScope: String? {

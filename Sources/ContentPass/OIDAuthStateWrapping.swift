@@ -15,5 +15,5 @@ protocol OIDAuthStateWrapping: NSSecureCoding {
     var errorDelegate: OIDAuthStateErrorDelegate? { get set }
     var stateChangeDelegate: OIDAuthStateChangeDelegate? { get set }
 
-    func performTokenRefresh()
+    func performTokenRefresh(errorHandler: @escaping (Error) -> Void)
 }

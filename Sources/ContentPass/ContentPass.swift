@@ -123,6 +123,15 @@ public class ContentPass: NSObject {
         oidAuthState = nil
     }
 
+    /// Triggers validation of the authentication tokens.
+    ///
+    /// You might encounter error states because there was no or bad internet connection while refreshing the tokens.
+    /// Call this function to tell the `ContentPass` object that the internet connection recovered.
+    /// It then refreshes and / or reauthenticates the tokens if necessary.
+    public func recoverFromError() {
+        validateAuthState()
+    }
+
     // MARK: INTERNAL FUNCTIONS
 
     convenience init(configuration: Configuration, keychain: KeychainStoring) {
@@ -211,7 +220,10 @@ public class ContentPass: NSObject {
             state = .unauthenticated
             return
         }
-        authState.performTokenRefresh()
+
+        authState.performTokenRefresh { [weak self] error in
+            self?.state = .error(error)
+        }
     }
 
     private func didSetState(_ state: State) {
