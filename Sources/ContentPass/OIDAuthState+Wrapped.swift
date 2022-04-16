@@ -13,6 +13,23 @@ extension OIDAuthState: OIDAuthStateWrapping {
         }
     }
 
+    func fireRequest(urlRequest: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
+        performAction { accessToken, _, error in
+            if let error = error  {
+                completionHandler(nil, nil, error)
+            } else if let accessToken = accessToken {
+                var urlRequest = urlRequest
+                urlRequest.allHTTPHeaderFields = ["Authorization": "Bearer \(accessToken)"]
+                
+                URLSession.shared.dataTask(with: urlRequest) {
+                    completionHandler($0, $1, $2)
+                }.resume()
+            } else {
+                completionHandler(nil, nil, ContentPassError.missingAccessToken)
+            }
+        }
+    }
+    
     var tokenScope: String? {
         lastTokenResponse?.scope
     }

@@ -13,9 +13,8 @@
 		C220915E26C411FE00B4C95E /* ContentPass in Frameworks */ = {isa = PBXBuildFile; productRef = C220915D26C411FE00B4C95E /* ContentPass */; };
 		C23FE60026CD1DB2008EC0B4 /* Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23FE5FF26CD1DB2008EC0B4 /* Convenience.swift */; };
 		C243C69926EFBCCB00A02F9A /* contentpass_configuration.json in Resources */ = {isa = PBXBuildFile; fileRef = C243C69826EFBCBF00A02F9A /* contentpass_configuration.json */; };
-		C285ABC526C15A0B0066844B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C285ABC426C15A0B0066844B /* AppDelegate.swift */; };
-		C285ABC726C15A0B0066844B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C285ABC626C15A0B0066844B /* SceneDelegate.swift */; };
-		C285ABC926C15A0B0066844B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C285ABC826C15A0B0066844B /* ViewController.swift */; };
+		C27DB4522853A0E100B7FBD7 /* ContentPassExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C27DB4512853A0E100B7FBD7 /* ContentPassExampleApp.swift */; };
+		C27DB4542853A0F700B7FBD7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C27DB4532853A0F700B7FBD7 /* ContentView.swift */; };
 		C285ABCE26C15A0D0066844B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C285ABCD26C15A0D0066844B /* Assets.xcassets */; };
 		C285ABD126C15A0D0066844B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C285ABCF26C15A0D0066844B /* LaunchScreen.storyboard */; };
 		C285ABDC26C15A0D0066844B /* KeychainStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C285ABDB26C15A0D0066844B /* KeychainStoreTests.swift */; };
@@ -40,10 +39,9 @@
 		C20AEC5A26C19DC3003F07CB /* ContentPassTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentPassTests.swift; sourceTree = "<group>"; };
 		C23FE5FF26CD1DB2008EC0B4 /* Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Convenience.swift; sourceTree = "<group>"; };
 		C243C69826EFBCBF00A02F9A /* contentpass_configuration.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = contentpass_configuration.json; sourceTree = "<group>"; };
+		C27DB4512853A0E100B7FBD7 /* ContentPassExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentPassExampleApp.swift; sourceTree = "<group>"; };
+		C27DB4532853A0F700B7FBD7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		C285ABC126C15A0B0066844B /* ContentPassExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ContentPassExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C285ABC426C15A0B0066844B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		C285ABC626C15A0B0066844B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		C285ABC826C15A0B0066844B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		C285ABCD26C15A0D0066844B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C285ABD026C15A0D0066844B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C285ABD226C15A0D0066844B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -105,14 +103,13 @@
 		C285ABC326C15A0B0066844B /* ContentPassExample */ = {
 			isa = PBXGroup;
 			children = (
-				C285ABC426C15A0B0066844B /* AppDelegate.swift */,
-				C285ABC626C15A0B0066844B /* SceneDelegate.swift */,
-				C285ABC826C15A0B0066844B /* ViewController.swift */,
 				C243C69826EFBCBF00A02F9A /* contentpass_configuration.json */,
-				C2CDF15E26CD5608001AD56B /* ViewModel.swift */,
 				C285ABCD26C15A0D0066844B /* Assets.xcassets */,
 				C285ABCF26C15A0D0066844B /* LaunchScreen.storyboard */,
 				C285ABD226C15A0D0066844B /* Info.plist */,
+				C27DB4512853A0E100B7FBD7 /* ContentPassExampleApp.swift */,
+				C27DB4532853A0F700B7FBD7 /* ContentView.swift */,
+				C2CDF15E26CD5608001AD56B /* ViewModel.swift */,
 			);
 			path = ContentPassExample;
 			sourceTree = "<group>";
@@ -243,10 +240,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C285ABC926C15A0B0066844B /* ViewController.swift in Sources */,
-				C285ABC526C15A0B0066844B /* AppDelegate.swift in Sources */,
+				C27DB4522853A0E100B7FBD7 /* ContentPassExampleApp.swift in Sources */,
+				C27DB4542853A0F700B7FBD7 /* ContentView.swift in Sources */,
 				C2CDF15F26CD5608001AD56B /* ViewModel.swift in Sources */,
-				C285ABC726C15A0B0066844B /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -410,7 +406,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 226G2VN77P;
 				INFOPLIST_FILE = ContentPassExample/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -430,7 +426,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 226G2VN77P;
 				INFOPLIST_FILE = ContentPassExample/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

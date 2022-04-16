@@ -60,6 +60,8 @@ public class ContentPass: NSObject {
     let delegateWrapper = OIDDelegateWrapper()
     var refreshTimer: Timer?
 
+    private let configuration: Configuration
+    
     // MARK: PUBLIC FUNCTIONS
 
     /// An object that handles all communication with the contentpass servers for you.
@@ -131,6 +133,26 @@ public class ContentPass: NSObject {
     public func recoverFromError() {
         validateAuthState()
     }
+    
+    public func countImpression(completionHandler: @escaping (Result<Void, Error>) -> Void) {
+        let impressionID = UUID()
+        let propertyId = propertyId.split(separator: "-").first!
+        let request = URLRequest(url: URL(string:  "\(configuration.baseUrl)/pass/hit?pid=\(propertyId)&iid=\(impressionID)&t=pageview")!)
+        
+        oidAuthState?.fireRequest(urlRequest: request) { data, response, error in
+            if let error = error {
+                completionHandler(.failure(error))
+            } else if let httpResponse = response as? HTTPURLResponse {
+                if httpResponse.statusCode == 200 {
+                    completionHandler(.success(()))
+                } else {
+                    completionHandler(.failure(ContentPassError.badHTTPStatusCode(httpResponse.statusCode)))
+                }
+            } else {
+                completionHandler(.failure(ContentPassError.corruptedResponseFromWeb))
+            }
+        }
+    }
 
     // MARK: INTERNAL FUNCTIONS
 
@@ -148,7 +170,7 @@ public class ContentPass: NSObject {
             delegateWrapper.delegate = self
             validateAuthState()
         }
-
+        self.configuration = configuration
         self.propertyId = configuration.propertyId
         self.keychain = keychain
         self.authorizer = authorizer

@@ -28,7 +28,10 @@ public enum ContentPassError: Error {
 
     /// The user canceled the authentication flow by dismissing the authentication view.
     case userCanceledAuthentication
-
+    
+    /// While counting an impression, something went wrong during the token refresh. You should double check whether a user is currently authorized.
+    case missingAccessToken
+    
     public enum UnexpectedState {
         case missingSubscriptionData
         case missingConfigurationAfterDiscovery

@@ -2,6 +2,9 @@
 import AppAuth
 
 class MockedAuthState: NSObject, OIDAuthStateWrapping {
+    func fireRequest(urlRequest: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
+    }
+    
     static var supportsSecureCoding = true
 
     var isAuthorized = false

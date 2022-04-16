@@ -1,13 +1,15 @@
-import UIKit
+import SwiftUI
 import ContentPass
 import Combine
 
-class ViewModel {
+class ViewModel: ObservableObject {
     let contentPass: ContentPass
 
     @Published var isAuthenticated = false
     @Published var hasValidSubscription = false
     @Published var isError = false
+    @Published var impressionTries = 0
+    @Published var impressionSuccesses = 0
 
     init(contentPass: ContentPass) {
         defer {
@@ -17,8 +19,10 @@ class ViewModel {
         self.contentPass = contentPass
     }
 
-    func login(presentingViewController: UIViewController) {
-        contentPass.authenticate(presentingViewController: presentingViewController) { result in
+    func login() {
+        guard let viewController = UIApplication.shared.windows.first?.rootViewController else { return }
+        
+        contentPass.authenticate(presentingViewController: viewController) { result in
             switch result {
             case .success:
                 break
@@ -36,7 +40,7 @@ class ViewModel {
                 alert.addAction(.init(title: "Okay", style: .default) { _ in
                     alert.dismiss(animated: true, completion: nil)
                 })
-                presentingViewController.present(alert, animated: true, completion: nil)
+                viewController.present(alert, animated: true, completion: nil)
             }
         }
     }
@@ -48,24 +52,41 @@ class ViewModel {
     func recoverFromError() {
         contentPass.recoverFromError()
     }
+    
+    func countImpression() {
+        contentPass.countImpression { [weak self] result in
+            DispatchQueue.main.async {
+                self?.impressionTries += 1
+                
+                switch result {
+                case .success:
+                    self?.impressionSuccesses += 1
+                case .failure(let error):
+                    print(error)
+                }
+            }
+        }
+    }
 }
 
 extension ViewModel: ContentPassDelegate {
     func onStateChanged(contentPass: ContentPass, newState: ContentPass.State) {
-        switch newState {
-        case .initializing, .unauthenticated:
-            isAuthenticated = false
-            hasValidSubscription = false
-            isError = false
-        case .error(let error):
-            print(error)
-            isAuthenticated = false
-            hasValidSubscription = false
-            isError = true
-        case .authenticated(let sub):
-            isAuthenticated = true
-            hasValidSubscription = sub
-            isError = false
+        DispatchQueue.main.async {
+            switch newState {
+            case .initializing, .unauthenticated:
+                self.isAuthenticated = false
+                self.hasValidSubscription = false
+                self.isError = false
+            case .error(let error):
+                print(error)
+                self.isAuthenticated = false
+                self.hasValidSubscription = false
+                self.isError = true
+            case .authenticated(let sub):
+                self.isAuthenticated = true
+                self.hasValidSubscription = sub
+                self.isError = false
+            }
         }
     }
 }
