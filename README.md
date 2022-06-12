@@ -157,6 +157,21 @@ Since we don't monitor the device's connection state you need to tell the SDK th
 contentPass.recoverFromError()
 ```
 
+### Couting an impression
+
+Counting an impression is as easy as calling the function `countImpression(completionHandler:)`. A user has to be authenticated and have an active subscription applicable to your scope for this to work.
+
+```swift
+contentPass.countImpression { result in
+  switch result {
+    case .success:
+    	// continue with your life
+    case .error(let error):
+    	// handle the error.
+  }
+}
+```
+
 
 
 ## License

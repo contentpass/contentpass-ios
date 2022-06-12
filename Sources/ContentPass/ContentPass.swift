@@ -134,6 +134,10 @@ public class ContentPass: NSObject {
         validateAuthState()
     }
     
+    /// Count an impression for the logged in user.
+    ///
+    /// A user needs to be authenticated and have a subscription applicable to your service.
+    /// - Parameter completionHandler: On a successful counting of the impression, the Result is a `success`. If something went wrong, you'll be supplied with an appropriate error case. The error  `ContentPassError.badHTTPStatusCode(404)` most probably means that your user has no applicable subscription.
     public func countImpression(completionHandler: @escaping (Result<Void, Error>) -> Void) {
         let impressionID = UUID()
         let propertyId = propertyId.split(separator: "-").first!
