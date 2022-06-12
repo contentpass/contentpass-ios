@@ -61,7 +61,7 @@ public class ContentPass: NSObject {
     var refreshTimer: Timer?
 
     private let configuration: Configuration
-    
+
     // MARK: PUBLIC FUNCTIONS
 
     /// An object that handles all communication with the contentpass servers for you.
@@ -133,7 +133,7 @@ public class ContentPass: NSObject {
     public func recoverFromError() {
         validateAuthState()
     }
-    
+
     /// Count an impression for the logged in user.
     ///
     /// A user needs to be authenticated and have a subscription applicable to your service.
@@ -141,9 +141,9 @@ public class ContentPass: NSObject {
     public func countImpression(completionHandler: @escaping (Result<Void, Error>) -> Void) {
         let impressionID = UUID()
         let propertyId = propertyId.split(separator: "-").first!
-        let request = URLRequest(url: URL(string:  "\(configuration.baseUrl)/pass/hit?pid=\(propertyId)&iid=\(impressionID)&t=pageview")!)
-        
-        oidAuthState?.fireRequest(urlRequest: request) { data, response, error in
+        let request = URLRequest(url: URL(string: "\(configuration.baseUrl)/pass/hit?pid=\(propertyId)&iid=\(impressionID)&t=pageview")!)
+
+        oidAuthState?.fireRequest(urlRequest: request) { _, response, error in
             if let error = error {
                 completionHandler(.failure(error))
             } else if let httpResponse = response as? HTTPURLResponse {

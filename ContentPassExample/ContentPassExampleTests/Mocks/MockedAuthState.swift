@@ -4,7 +4,7 @@ import AppAuth
 class MockedAuthState: NSObject, OIDAuthStateWrapping {
     func fireRequest(urlRequest: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
     }
-    
+
     static var supportsSecureCoding = true
 
     var isAuthorized = false
@@ -20,9 +20,10 @@ class MockedAuthState: NSObject, OIDAuthStateWrapping {
     weak var errorDelegate: OIDAuthStateErrorDelegate?
     weak var stateChangeDelegate: OIDAuthStateChangeDelegate?
     var wasTokenRefreshPerformed = false
+    var hasInternetConnection = true
 
     func performTokenRefresh(errorHandler: @escaping (Error) -> Void) {
-        wasTokenRefreshPerformed = true
+        wasTokenRefreshPerformed = hasInternetConnection
     }
 
     static func createRandom() -> MockedAuthState {
@@ -40,6 +41,7 @@ class MockedAuthState: NSObject, OIDAuthStateWrapping {
 
     required init?(coder: NSCoder) {
         isAuthorized = coder.decodeBool(forKey: "isAuthorized")
+        hasInternetConnection = coder.decodeBool(forKey: "hasInternetConnection")
         accessToken = coder.decodeObject(forKey: "accessToken") as? String
         accessTokenExpirationDate = coder.decodeObject(forKey: "accessTokenExpirationDate") as? Date
         refreshToken = coder.decodeObject(forKey: "refreshToken") as? String
@@ -54,6 +56,7 @@ class MockedAuthState: NSObject, OIDAuthStateWrapping {
     }
 
     func encode(with coder: NSCoder) {
+        coder.encode(hasInternetConnection, forKey: "hasInternetConnection")
         coder.encode(isAuthorized, forKey: "isAuthorized")
         coder.encode(accessToken, forKey: "accessToken")
         coder.encode(accessTokenExpirationDate, forKey: "accessTokenExpirationDate")

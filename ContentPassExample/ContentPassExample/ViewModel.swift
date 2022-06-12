@@ -21,7 +21,7 @@ class ViewModel: ObservableObject {
 
     func login() {
         guard let viewController = UIApplication.shared.windows.first?.rootViewController else { return }
-        
+
         contentPass.authenticate(presentingViewController: viewController) { result in
             switch result {
             case .success:
@@ -52,12 +52,12 @@ class ViewModel: ObservableObject {
     func recoverFromError() {
         contentPass.recoverFromError()
     }
-    
+
     func countImpression() {
         contentPass.countImpression { [weak self] result in
             DispatchQueue.main.async {
                 self?.impressionTries += 1
-                
+
                 switch result {
                 case .success:
                     self?.impressionSuccesses += 1
