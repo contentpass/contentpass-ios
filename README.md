@@ -26,24 +26,11 @@ or
 * Add the following `dependency` to your `Package.swift`:
 ```swift
 dependencies: [
-    .package(url: "https://github.com/contentpass/contentpass-ios-tol", .upToNextMajor(from: "1.0.0"))
+    .package(url: "https://github.com/contentpass/contentpass-ios-tol", .upToNextMajor(from: "1.3.0"))
 ]
 ```
 
 In both cases don't forget to add the sdk to your targets.
-
-
-
-### CocoaPods
-
-With [CocoaPods](https://guides.cocoapods.org/using/getting-started.html), add the following line to your `Podfile`:
-```ruby
-  pod 'ContentPass', '~> 1.2.0'
-```
-
-Then, run `pod install` via terminal.
-
-
 
 ## Usage
 

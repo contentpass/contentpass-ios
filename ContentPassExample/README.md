@@ -9,6 +9,6 @@ Replace the dummy `contentpass_configuration.json` with your configuration file 
 
 ## Notes
 
-The `ContentPass` SDK is held by the `SceneDelegate` in this case, but it could be any top level state object of your app. You should only hold one instance of the `ContentPass` class throughout your app at any one time.
+The `ContentPass` SDK is held by the `ContentPassExampleApp` in this case, but it should be any top level state object of your app. You should only hold one instance of the `ContentPass` class throughout your app at any one time.
 
 The `ViewModel` handles all communication with, as well as delegation by, the `ContentPass` object. Refer to that class on how to interact with the sdk.
