@@ -26,7 +26,7 @@ or
 * Add the following `dependency` to your `Package.swift`:
 ```swift
 dependencies: [
-    .package(url: "https://github.com/contentpass/contentpass-ios", .upToNextMajor(from: "1.1.0"))
+    .package(url: "https://github.com/contentpass/contentpass-ios", .upToNextMajor(from: "1.2.0"))
 ]
 ```
 
@@ -38,7 +38,7 @@ In both cases don't forget to add the sdk to your targets.
 
 With [CocoaPods](https://guides.cocoapods.org/using/getting-started.html), add the following line to your `Podfile`:
 ```ruby
-  pod 'ContentPass', '~> 1.1.0'
+  pod 'ContentPass', '~> 1.2.0'
 ```
 
 Then, run `pod install` via terminal.
@@ -155,6 +155,21 @@ Since we don't monitor the device's connection state you need to tell the SDK th
 
 ```swift
 contentPass.recoverFromError()
+```
+
+### Couting an impression
+
+Counting an impression is as easy as calling the function `countImpression(completionHandler:)`. A user has to be authenticated and have an active subscription applicable to your scope for this to work.
+
+```swift
+contentPass.countImpression { result in
+  switch result {
+    case .success:
+    	// continue with your life
+    case .error(let error):
+    	// handle the error.
+  }
+}
 ```
 
 

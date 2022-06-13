@@ -52,6 +52,22 @@ class ContentPassTests: XCTestCase {
         XCTAssert((contentPass.oidAuthState as? MockedAuthState)?.wasTokenRefreshPerformed ?? false)
     }
 
+    func testRecoverFromErrorValidatesAuthState() {
+        let authState = MockedAuthState.createRandom()
+        authState.hasInternetConnection = false
+        authState.accessTokenExpirationDate = Date(timeIntervalSinceNow: -1)
+        keychain.storeAuthState(authState)
+
+        let contentPass = ContentPass(configuration: configuration, keychain: keychain)
+
+        XCTAssertFalse((contentPass.oidAuthState as? MockedAuthState)?.wasTokenRefreshPerformed ?? false)
+
+        (contentPass.oidAuthState as? MockedAuthState)?.hasInternetConnection = true
+        contentPass.recoverFromError()
+
+        XCTAssert((contentPass.oidAuthState as? MockedAuthState)?.wasTokenRefreshPerformed ?? false)
+    }
+
     func testAuthStateValidationSetsTokenRefreshTimer() {
         let authState = MockedAuthState.createRandom()
         authState.accessTokenExpirationDate = Date(timeIntervalSinceNow: 5)

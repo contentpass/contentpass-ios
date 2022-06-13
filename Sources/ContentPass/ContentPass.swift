@@ -60,6 +60,8 @@ public class ContentPass: NSObject {
     let delegateWrapper = OIDDelegateWrapper()
     var refreshTimer: Timer?
 
+    private let configuration: Configuration
+
     // MARK: PUBLIC FUNCTIONS
 
     /// An object that handles all communication with the contentpass servers for you.
@@ -132,6 +134,30 @@ public class ContentPass: NSObject {
         validateAuthState()
     }
 
+    /// Count an impression for the logged in user.
+    ///
+    /// A user needs to be authenticated and have a subscription applicable to your service.
+    /// - Parameter completionHandler: On a successful counting of the impression, the Result is a `success`. If something went wrong, you'll be supplied with an appropriate error case. The error  `ContentPassError.badHTTPStatusCode(404)` most probably means that your user has no applicable subscription.
+    public func countImpression(completionHandler: @escaping (Result<Void, Error>) -> Void) {
+        let impressionID = UUID()
+        let propertyId = propertyId.split(separator: "-").first!
+        let request = URLRequest(url: URL(string: "\(configuration.baseUrl)/pass/hit?pid=\(propertyId)&iid=\(impressionID)&t=pageview")!)
+
+        oidAuthState?.fireRequest(urlRequest: request) { _, response, error in
+            if let error = error {
+                completionHandler(.failure(error))
+            } else if let httpResponse = response as? HTTPURLResponse {
+                if httpResponse.statusCode == 200 {
+                    completionHandler(.success(()))
+                } else {
+                    completionHandler(.failure(ContentPassError.badHTTPStatusCode(httpResponse.statusCode)))
+                }
+            } else {
+                completionHandler(.failure(ContentPassError.corruptedResponseFromWeb))
+            }
+        }
+    }
+
     // MARK: INTERNAL FUNCTIONS
 
     convenience init(configuration: Configuration, keychain: KeychainStoring) {
@@ -148,7 +174,7 @@ public class ContentPass: NSObject {
             delegateWrapper.delegate = self
             validateAuthState()
         }
-
+        self.configuration = configuration
         self.propertyId = configuration.propertyId
         self.keychain = keychain
         self.authorizer = authorizer
