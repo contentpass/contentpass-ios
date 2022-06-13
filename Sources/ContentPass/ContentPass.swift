@@ -101,11 +101,12 @@ public class ContentPass: NSObject {
                 self?.oidAuthState = newAuthState
 
                 guard let idToken = newAuthState.idToken else { break }
+                let email = self?.extractEmail(from: idToken)
 
                 self?.authorizer.validateSubscription(idToken: idToken) { result in
                     switch result {
                     case .success(let isValid):
-                        completionHandler(.success(.authenticated(hasValidSubscription: isValid)))
+                        completionHandler(.success(.authenticated(email: email, hasValidSubscription: isValid)))
                     case .failure(let error):
                         completionHandler(.failure(error))
                     }
@@ -114,6 +115,17 @@ public class ContentPass: NSObject {
                 completionHandler(.failure(error))
             }
         }
+    }
+
+    /// Provides a UIView that automatically loads the user's dashboard if your contentpass scope allows this. 
+    public func provideDashboardView() -> ContentPassDashboardView? {
+        guard
+            let refreshToken = oidAuthState?.refreshToken,
+            let url = URL(string: "\(configuration.baseUrl)/auth/login/transfer?propertyId=\(propertyId)&refreshToken=\(refreshToken)")
+        else {
+            return nil
+        }
+        return ContentPassDashboardView(with: url)
     }
 
     /// Removes all saved information regarding the currently logged in user.
@@ -218,11 +230,12 @@ public class ContentPass: NSObject {
             state = .error(ContentPassError.oidAuthenticatedButMissingIdToken)
             return
         }
+        let email = extractEmail(from: idToken)
 
         authorizer.validateSubscription(idToken: idToken) { [weak self] result in
             switch result {
             case .success(let isValid):
-                self?.state = .authenticated(hasValidSubscription: isValid)
+                self?.state = .authenticated(email: email, hasValidSubscription: isValid)
             case .failure(let error):
                 self?.state = .error(error)
             }
@@ -271,6 +284,22 @@ public class ContentPass: NSObject {
         }
     }
 
+    private func extractEmail(from idToken: String) -> String? {
+        struct IdToken: Decodable {
+            let email: String
+        }
+
+        let segments = idToken.components(separatedBy: ".")
+        let jsonDecoder = JSONDecoder()
+        guard
+            segments.count >= 2,
+            let json = Data(urlSafeBase64Encoded: segments[1]),
+            let idToken = try? jsonDecoder.decode(IdToken.self, from: json)
+        else {
+            return nil
+        }
+        return idToken.email
+    }
 }
 
 // MARK: OIDDelegateWrapperDelegate

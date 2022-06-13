@@ -19,14 +19,14 @@ We currently support SPM as well as CocoaPods.
 ### Swift Package Manager
 
 With [Swift Package Manager](https://swift.org/package-manager), either
-* In Xcode simply select **File > Swift Packages > Add Package Dependency** from menu and paste `https://github.com/contentpass/contentpass-ios`
+* In Xcode simply select **File > Swift Packages > Add Package Dependency** from menu and paste `https://github.com/contentpass/contentpass-ios`-tol
 
 or
 
 * Add the following `dependency` to your `Package.swift`:
 ```swift
 dependencies: [
-    .package(url: "https://github.com/contentpass/contentpass-ios", .upToNextMajor(from: "1.2.0"))
+    .package(url: "https://github.com/contentpass/contentpass-ios-tol", .upToNextMajor(from: "1.0.0"))
 ]
 ```
 
@@ -78,7 +78,7 @@ extension SceneDelegate: ContentPassDelegate {
     func onStateChanged(contentPass: ContentPass, newState: ContentPass.State) {
       // handle the new ContentPass.State, e.g.
       switch newState {
-        case .authenticated(let hasValidSubscription):
+        case .authenticated(let email, let hasValidSubscription):
 	        print("This was a triumph!")
         default:
         	break
@@ -171,6 +171,16 @@ contentPass.countImpression { result in
   }
 }
 ```
+
+### Dashboard
+
+If you need to display the user's dashboard where they can configure their subscription plans, you can do so by displaying the `ContentPassDashboardView`. The ContentPass object offers the function:
+
+```swift
+contentPass.provideDashboardView()
+```
+
+This `ContentPassDashboardView` is a `UIView` that you can present as a sheet or in any other way you want.
 
 
 

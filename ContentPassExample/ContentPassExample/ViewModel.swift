@@ -10,6 +10,8 @@ class ViewModel: ObservableObject {
     @Published var isError = false
     @Published var impressionTries = 0
     @Published var impressionSuccesses = 0
+    @Published var email: String?
+    @Published var dashboard: ContentPassDashboardView?
 
     init(contentPass: ContentPass) {
         defer {
@@ -67,6 +69,10 @@ class ViewModel: ObservableObject {
             }
         }
     }
+
+    func openDashboard() {
+        dashboard = contentPass.provideDashboardView()
+    }
 }
 
 extension ViewModel: ContentPassDelegate {
@@ -74,15 +80,18 @@ extension ViewModel: ContentPassDelegate {
         DispatchQueue.main.async {
             switch newState {
             case .initializing, .unauthenticated:
+                self.email = nil
                 self.isAuthenticated = false
                 self.hasValidSubscription = false
                 self.isError = false
             case .error(let error):
                 print(error)
+                self.email = nil
                 self.isAuthenticated = false
                 self.hasValidSubscription = false
                 self.isError = true
-            case .authenticated(let sub):
+            case .authenticated(let email, let sub):
+                self.email = email
                 self.isAuthenticated = true
                 self.hasValidSubscription = sub
                 self.isError = false

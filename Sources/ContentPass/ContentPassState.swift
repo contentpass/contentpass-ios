@@ -17,7 +17,8 @@ extension ContentPass {
         /// The user has authenticated themselves successfully with our services.
         ///
         /// Since an authenticated user might not have an active subscription, you should always check `hasValidSubscription` to act accordingly.
-        case authenticated(hasValidSubscription: Bool)
+        /// If your contentpass scope allows for the email address to be exposed in the ID-Token, you can also extract the user's email address here.
+        case authenticated(email: String?, hasValidSubscription: Bool)
 
         /// We encountered an error.
         ///

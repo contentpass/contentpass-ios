@@ -111,7 +111,7 @@ class ContentPassTests: XCTestCase {
         let authorizer = Convenience.createDummyAuthorizer()
         let contentPass = ContentPass(configuration: configuration, keychain: keychain, authorizer: authorizer)
 
-        XCTAssertEqual(contentPass.state, .authenticated(hasValidSubscription: true))
+        XCTAssertEqual(contentPass.state, .authenticated(email: nil, hasValidSubscription: true))
 
         contentPass.oidAuthState = nil
 
@@ -183,9 +183,9 @@ class ContentPassTests: XCTestCase {
 
         XCTAssertNil(delegatedState)
 
-        contentPass.state = .authenticated(hasValidSubscription: true)
+        contentPass.state = .authenticated(email: nil, hasValidSubscription: true)
 
-        XCTAssertEqual(delegatedState, .authenticated(hasValidSubscription: true))
+        XCTAssertEqual(delegatedState, .authenticated(email: nil, hasValidSubscription: true))
     }
 
     func testAuthStateChangeToUnauthorizedResultsInCorrectStateBubbling() {
@@ -193,9 +193,9 @@ class ContentPassTests: XCTestCase {
         contentPass.delegate = self
         let authState = MockedAuthState.createRandom()
         authState.isAuthorized = false
-        contentPass.state = .authenticated(hasValidSubscription: true)
+        contentPass.state = .authenticated(email: nil, hasValidSubscription: true)
 
-        XCTAssertEqual(delegatedState, .authenticated(hasValidSubscription: true))
+        XCTAssertEqual(delegatedState, .authenticated(email: nil, hasValidSubscription: true))
 
         contentPass.didChange(authState)
 
@@ -227,7 +227,7 @@ class ContentPassTests: XCTestCase {
         let authState = MockedAuthState.createRandom()
         contentPass.oidAuthState = authState
 
-        XCTAssertEqual(delegatedState, .authenticated(hasValidSubscription: true))
+        XCTAssertEqual(delegatedState, .authenticated(email: nil, hasValidSubscription: true))
     }
 
     func testAuthStateChangeToAuthorizedStoresAuthState() {
@@ -299,7 +299,7 @@ class ContentPassTests: XCTestCase {
         let contentPass = ContentPass(configuration: configuration, keychain: keychain, authorizer: authorizer)
         contentPass.delegate = self
 
-        XCTAssertEqual(contentPass.state, .authenticated(hasValidSubscription: true))
+        XCTAssertEqual(contentPass.state, .authenticated(email: nil, hasValidSubscription: true))
 
         contentPass.logout()
         XCTAssertEqual(delegatedState, .unauthenticated)
