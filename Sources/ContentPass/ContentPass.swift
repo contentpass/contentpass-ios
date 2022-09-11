@@ -80,7 +80,7 @@ public class ContentPass: NSObject {
         let authorizer = Authorizer(
             clientId: config.propertyId,
             clientRedirectUri: config.redirectUrl,
-            discoveryUrl: config.baseUrl
+            discoveryUrl: config.oidcUrl
         )
         self.init(configuration: config, keychain: KeychainStore(clientId: config.propertyId), authorizer: authorizer)
     }
@@ -141,7 +141,7 @@ public class ContentPass: NSObject {
     public func countImpression(completionHandler: @escaping (Result<Void, Error>) -> Void) {
         let impressionID = UUID()
         let propertyId = propertyId.split(separator: "-").first!
-        let request = URLRequest(url: URL(string: "\(configuration.baseUrl)/pass/hit?pid=\(propertyId)&iid=\(impressionID)&t=pageview")!)
+        let request = URLRequest(url: URL(string: "\(configuration.apiUrl)/pass/hit?pid=\(propertyId)&iid=\(impressionID)&t=pageview")!)
 
         oidAuthState?.fireRequest(urlRequest: request) { _, response, error in
             if let error = error {
@@ -164,7 +164,7 @@ public class ContentPass: NSObject {
         let authorizer = Authorizer(
             clientId: configuration.propertyId,
             clientRedirectUri: configuration.redirectUrl,
-            discoveryUrl: configuration.baseUrl
+            discoveryUrl: configuration.oidcUrl
         )
         self.init(configuration: configuration, keychain: keychain, authorizer: authorizer)
     }
