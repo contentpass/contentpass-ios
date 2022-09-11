@@ -1,7 +1,8 @@
 import Foundation
 
 struct Configuration {
-    let baseUrl: URL
+    let apiUrl: URL
+    let oidcUrl: URL
     let redirectUrl: URL
     let propertyId: String
 
@@ -13,26 +14,36 @@ struct Configuration {
             keyDecodingStrategy: .convertFromSnakeCase
         )
 
-        let expectedVersion = 1
+        let expectedVersion = 2
 
         guard fromDisk.schemaVersion == expectedVersion else {
             fatalError("Failed to decode \(fileName) from bundle due to unexpected schema_version. Expected: \(expectedVersion)")
         }
 
-        guard let baseUrl = URL(string: fromDisk.baseUrl) else {
-            fatalError("Failed to decode \(fileName) from bundle due to base_url being malformed")
+        guard let apiUrl = URL(string: fromDisk.apiUrl) else {
+            fatalError("Failed to decode \(fileName) from bundle due to api_url being malformed")
+        }
+
+        guard let oidcUrl = URL(string: fromDisk.oidcUrl) else {
+            fatalError("Failed to decode \(fileName) from bundle due to oidc_url being malformed")
         }
 
         guard let redirectUrl = URL(string: fromDisk.redirectUri) else {
             fatalError("Failed to decode \(fileName) from bundle due to redirect_uri being malformed")
         }
 
-        return Configuration(baseUrl: baseUrl, redirectUrl: redirectUrl, propertyId: fromDisk.propertyId)
+        return Configuration(
+            apiUrl: apiUrl,
+            oidcUrl: oidcUrl,
+            redirectUrl: redirectUrl,
+            propertyId: fromDisk.propertyId
+        )
     }
 
     fileprivate struct ConfigOnDisk: Codable {
         let schemaVersion: Int
-        let baseUrl: String
+        let apiUrl: String
+        let oidcUrl: String
         let redirectUri: String
         let propertyId: String
     }

@@ -5,7 +5,8 @@ class ContentPassTests: XCTestCase {
     var delegatedState: ContentPass.State?
     let keychain = KeychainStore(clientId: "")
     let configuration = Configuration(
-        baseUrl: URL(string: "https://contentpass.de")!,
+        apiUrl: URL(string: "https://api.contentpass.de")!,
+        oidcUrl: URL(string: "https://contentpass.de")!,
         redirectUrl: URL(string: "de.contentpass://oauth")!,
         propertyId: UUID().uuidString
     )
@@ -39,7 +40,7 @@ class ContentPassTests: XCTestCase {
     func testConvenienceInitializerSetsCorrectClientId() {
         let contentPass = ContentPass()
 
-        XCTAssertEqual(contentPass.authorizer.clientId, "85ff2a2a-54f7-4da1-97af-9752572396ab")
+        XCTAssertEqual(contentPass.authorizer.clientId, "YOUR_PROPERTY_ID")
     }
 
     func testAuthStateValidationDoesTokenRefreshWhenNeeded() {
