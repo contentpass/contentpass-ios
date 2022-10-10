@@ -57,7 +57,7 @@ class Authorizer: Authorizing {
             scopes: scopes,
             redirectURL: clientRedirectUri,
             responseType: OIDResponseTypeCode,
-            additionalParameters: ["cp_route": "login", "prompt": "consent"]
+            additionalParameters: ["cp_route": "login", "prompt": "consent", "cp_property": clientId]
         )
     }
 

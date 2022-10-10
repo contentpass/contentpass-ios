@@ -109,7 +109,7 @@ final class AuthorizerTests: XCTestCase {
         XCTAssertEqual(dummyClient.authRequest?.redirectURL, redirectUri)
         XCTAssertEqual(dummyClient.authRequest?.scope, "openid offline_access contentpass")
         XCTAssertEqual(dummyClient.authRequest?.responseType, OIDResponseTypeCode)
-        XCTAssertEqual(dummyClient.authRequest?.additionalParameters, ["cp_route": "login", "prompt": "consent"])
+        XCTAssertEqual(dummyClient.authRequest?.additionalParameters, ["cp_route": "login", "prompt": "consent", "cp_property": clientId])
     }
 
     func testValidateSubscriptionBubblesUpDiscoveyError() {
