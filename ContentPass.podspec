@@ -13,6 +13,6 @@ Pod::Spec.new do |spec|
   spec.source       = { :git => "https://github.com/contentpass/contentpass-ios.git", :tag => "#{spec.version}" }
   spec.source_files  = "Sources/**/*"
 
-  spec.dependency 'AppAuth', '1.4.0'
+  spec.dependency 'AppAuth', '1.7.5'
   spec.dependency 'Strongbox', '0.6.1'
 end

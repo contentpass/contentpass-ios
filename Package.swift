@@ -13,7 +13,7 @@ let package = Package(
             targets: ["ContentPass"])
     ],
     dependencies: [
-        .package(name: "AppAuth", url: "https://github.com/openid/AppAuth-iOS", .exact("1.4.0")),
+        .package(name: "AppAuth", url: "https://github.com/openid/AppAuth-iOS", .exact("1.7.5")),
         .package(name: "Strongbox", url: "https://github.com/granoff/Strongbox", .exact("0.6.1"))
     ],
     targets: [
