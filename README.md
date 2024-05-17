@@ -26,7 +26,7 @@ or
 * Add the following `dependency` to your `Package.swift`:
 ```swift
 dependencies: [
-    .package(url: "https://github.com/contentpass/contentpass-ios", .upToNextMajor(from: "2.0.0"))
+    .package(url: "https://github.com/contentpass/contentpass-ios", .upToNextMajor(from: "2.1.0"))
 ]
 ```
 
@@ -63,7 +63,7 @@ You should instantiate and hold one instance of the `ContentPass` class in one o
 ```swift
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   let contentPass = ContentPass()
-  
+
   func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
     // ...
     contentPass.delegate = self
@@ -89,7 +89,7 @@ extension SceneDelegate: ContentPassDelegate {
 
 ### Authentication
 
-We use [AppAuth](https://github.com/openid/AppAuth-iOS) for the OAuth 2.0 process. AppAuth uses Apple's `ASWebAuthenticationSession` or if below iOS 12 `SFAuthenticationSession`. 
+We use [AppAuth](https://github.com/openid/AppAuth-iOS) for the OAuth 2.0 process. AppAuth uses Apple's `ASWebAuthenticationSession` or if below iOS 12 `SFAuthenticationSession`.
 
 That means, that the user will be presented with a modal `SFSafariViewController` like view in which they can authenticate themselves with our servers. We then use the OAuth result to validate whether the user has any active contentpass subscriptions that are applicable.
 
@@ -99,24 +99,24 @@ To authenticate and authorize the user, simply call `authenticate` on the `Conte
 contentPass.authenticate(presentingViewController: viewController) { result in
 	switch result {
     case .success:
-    	// this only means that authentication was successful, 
+    	// this only means that authentication was successful,
     	// it doesn't tell you anything about the subscription status
     	break
     case .failure(let error):
     	// handle errors accordingly - refer to "Error handling" in this document
-  }	
+  }
 }
 ```
 
 If the authentication was a success, we will poll our servers for subscription plans in the background.
 
-The `delegate` will be called with the final authentication and subscription state. 
+The `delegate` will be called with the final authentication and subscription state.
 
 **Be aware that a successfully authenticated user may have no active subscription plans** and act accordingly!
 
 ### A few words on persistence
 
-* We store tokens that anonymously identify the logged in user's session to our servers in the device's keychain. 
+* We store tokens that anonymously identify the logged in user's session to our servers in the device's keychain.
 * We refresh these tokens automatically in the background before they're invalidated.
 * The subscription information gets validated as well on every token refresh.
 
@@ -129,7 +129,7 @@ contentPass.logout()
 ```
 
 The user will of course have to log in again afterwards.
-You can also call `authenticate` again and all previous user information will get overwritten. 
+You can also call `authenticate` again and all previous user information will get overwritten.
 We only store *one* user session at any one time.
 
 ### Error handling
@@ -138,11 +138,11 @@ An error can occur during the `authenticate` function's lifetime or you can get 
 
 We have our own `ContentPassError` enum for the following cases:
 
-* The user has canceled or dismissed the OAuth flow: `userCanceledAuthentication` 
+* The user has canceled or dismissed the OAuth flow: `userCanceledAuthentication`
   You should handle this accordingly.
 * Something went wrong while communicating with the backend: `subscriptionDataCorrupted`, `corruptedResponseFromWeb`, `badHTTPStatusCode` or `oidAuthenticatedButMissingIdToken`
   If you're sure that you have configured and set up everything correctly and one of these problems persists, contact us via GitHub issues or by mail.
-* Something very unexpected happened: `unexpectedState` 
+* Something very unexpected happened: `unexpectedState`
   This should never occur and is basically our `throws` replacement since we're async. If you encounter one of these, feel very free to open a GitHub issue.
 
 We also bubble up underlying errors that may occur because of connectivity problems or other issues regarding the OAuth flow.
