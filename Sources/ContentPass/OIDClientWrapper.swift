@@ -8,11 +8,20 @@ class OIDClientWrapper: OIDClientWrapping {
     }
 
     func doAuthorization(byPresenting: OIDAuthorizationRequest, presenting: UIViewController, completionHandler: @escaping (OIDAuthStateWrapping?, Error?) -> Void) {
-        currentAuthorizationFlow = OIDAuthState.authState(
-            byPresenting: byPresenting,
-            presenting: presenting,
-            callback: completionHandler
-        )
+        if #available(iOS 13, *) {
+            currentAuthorizationFlow = OIDAuthState.authState(
+                byPresenting: byPresenting,
+                presenting: presenting,
+                prefersEphemeralSession: true,
+                callback: completionHandler
+            )
+        } else {
+            currentAuthorizationFlow = OIDAuthState.authState(
+                byPresenting: byPresenting,
+                presenting: presenting,
+                callback: completionHandler
+            )
+        }
     }
 
     func fireValidationRequest(_ validationRequest: URLRequest, completionHandler: @escaping (Data?, Error?) -> Void) {
