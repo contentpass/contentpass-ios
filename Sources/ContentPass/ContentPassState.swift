@@ -1,5 +1,3 @@
-// swiftlint:disable cyclomatic_complexity
-
 extension ContentPass {
 
     /// The possible contentpass authentication states.
@@ -24,6 +22,7 @@ extension ContentPass {
         /// This might be a `ContentPassError` but it also can be something underlying. In the latter case, cast it to `NSError` and act according to `domain` and `code`.
         case error(Error)
 
+        // swiftlint:disable cyclomatic_complexity
         public static func == (lhs: ContentPass.State, rhs: ContentPass.State) -> Bool {
             switch lhs {
             case .error:
@@ -56,5 +55,6 @@ extension ContentPass {
                 }
             }
         }
+        // swiftlint:enable cyclomatic_complexity
     }
 }
