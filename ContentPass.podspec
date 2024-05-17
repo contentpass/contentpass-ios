@@ -5,12 +5,12 @@ Pod::Spec.new do |spec|
 
   spec.homepage     = "https://contentpass.de"
   spec.license      = { :type => "MIT", :file => "LICENSE" }
-  spec.author             = "Content Pass GmbH" 
-  
-  spec.platform     = :ios
+  spec.author       = "Content Pass GmbH"
+
+  spec.platform              = :ios
   spec.ios.deployment_target = "10.0"
 
-  spec.source       = { :git => "https://github.com/contentpass/contentpass-ios.git", :tag => "#{spec.version}" }
+  spec.source        = { :git => "https://github.com/contentpass/contentpass-ios.git", :tag => "#{spec.version}" }
   spec.source_files  = "Sources/**/*"
 
   spec.dependency 'AppAuth', '1.7.5'
