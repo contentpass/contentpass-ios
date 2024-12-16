@@ -2,6 +2,8 @@ import AppAuth
 import AuthenticationServices
 import UIKit
 
+let samplingRate: Double = 0.05
+
 /// Functions that enable you to react to changes in the contentpass sdk's state.
 public protocol ContentPassDelegate: AnyObject {
     /// A function that enables you to react to a change in contentpass state.
@@ -43,7 +45,7 @@ public class ContentPass: NSObject {
     /// This is always up to date but to be notified of changes in state, be sure to register a `ContentPassDelegate` as the parent object's `delegate`.
     ///
     /// For the possible values and their meaning see `ContentPass.State`.
-    internal (set) public var state = State.initializing { didSet { didSetState(state) } }
+    internal(set) public var state = State.initializing { didSet { didSetState(state) } }
 
     /// The object that acts as the delegate of the contentpass sdk.
     ///
@@ -134,26 +136,39 @@ public class ContentPass: NSObject {
         validateAuthState()
     }
 
-    /// Count an impression for the logged in user.
+    /// Count an impression for user.
     ///
-    /// A user needs to be authenticated and have a subscription applicable to your service.
-    /// - Parameter completionHandler: On a successful counting of the impression, the Result is a `success`. If something went wrong, you'll be supplied with an appropriate error case. The error  `ContentPassError.badHTTPStatusCode(404)` most probably means that your user has no applicable subscription.
+    /// If user has a valid subscription, a paid impression will be counted. Additionally a sampled impression will be
+    /// counted for all users, no matter if they have a valid subscription or not.
+    /// - Parameter completionHandler: On a successful counting of the impression, the Result is a `success`. If something went wrong,
+    /// you'll be supplied with an appropriate error case.
     public func countImpression(completionHandler: @escaping (Result<Void, Error>) -> Void) {
-        let impressionID = UUID()
-        let propertyId = propertyId.split(separator: "-").first!
-        let request = URLRequest(url: URL(string: "\(configuration.apiUrl)/pass/hit?pid=\(propertyId)&iid=\(impressionID)&t=pageview")!)
+        let dispatchGroup = DispatchGroup()
+        var errors: [Error] = []
 
-        oidAuthState?.fireRequest(urlRequest: request) { _, response, error in
-            if let error = error {
-                completionHandler(.failure(error))
-            } else if let httpResponse = response as? HTTPURLResponse {
-                if httpResponse.statusCode == 200 {
-                    completionHandler(.success(()))
-                } else {
-                    completionHandler(.failure(ContentPassError.badHTTPStatusCode(httpResponse.statusCode)))
+        if state == .authenticated(hasValidSubscription: true) {
+            dispatchGroup.enter()
+            countPaidImpression { result in
+                if case .failure(let error) = result {
+                    errors.append(error)
                 }
+                dispatchGroup.leave()
+            }
+        }
+
+        dispatchGroup.enter()
+        countSampledImpression { result in
+            if case .failure(let error) = result {
+                errors.append(error)
+            }
+            dispatchGroup.leave()
+        }
+
+        dispatchGroup.notify(queue: .main) {
+            if let error = errors.first {
+                completionHandler(.failure(error))
             } else {
-                completionHandler(.failure(ContentPassError.corruptedResponseFromWeb))
+                completionHandler(.success(()))
             }
         }
     }
@@ -188,6 +203,67 @@ public class ContentPass: NSObject {
         }
 
         super.init()
+    }
+
+    private func countPaidImpression(completionHandler: @escaping (Result<Void, Error>) -> Void) {
+        let impressionID = UUID()
+        let propertyId = propertyId.split(separator: "-").first!
+        let request = URLRequest(url: URL(string: "\(configuration.apiUrl)/pass/hit?pid=\(propertyId)&iid=\(impressionID)&t=pageview")!)
+
+        oidAuthState?.fireRequest(urlRequest: request) { _, response, error in
+            if let error = error {
+                completionHandler(.failure(error))
+            } else if let httpResponse = response as? HTTPURLResponse {
+                if httpResponse.statusCode == 200 {
+                    completionHandler(.success(()))
+                } else {
+                    completionHandler(.failure(ContentPassError.badHTTPStatusCode(httpResponse.statusCode)))
+                }
+            } else {
+                completionHandler(.failure(ContentPassError.corruptedResponseFromWeb))
+            }
+        }
+    }
+
+    private func countSampledImpression(completionHandler: @escaping (Result<Void, Error>) -> Void) {
+        let generatedSample = Double.random(in: 0...1)
+        if generatedSample >= samplingRate {
+            completionHandler(.success(()))
+            return
+        }
+
+        let instanceId = UUID().uuidString
+        let publicId = propertyId.prefix(8)
+        var request = URLRequest(url: URL(string: "\(configuration.apiUrl)/stats")!)
+        request.httpMethod="POST"
+        request.setValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-Type")
+        let body: [String: Any] = [
+            "ea": "load",
+            "ec": "tcf-sampled",
+            "cpabid": instanceId,
+            "cppid": publicId,
+            "cpsr": samplingRate
+        ]
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        } catch {
+            completionHandler(.failure(error))
+            return
+        }
+
+        URLSession.shared.dataTask(with: request) {_, response, error in
+            if let error = error {
+                completionHandler(.failure(error))
+            } else if let httpResponse = response as? HTTPURLResponse {
+                if httpResponse.statusCode >= 200 && httpResponse.statusCode < 300 {
+                    completionHandler(.success(()))
+                } else {
+                    completionHandler(.failure(ContentPassError.badHTTPStatusCode(httpResponse.statusCode)))
+                }
+            } else {
+                completionHandler(.failure(ContentPassError.corruptedResponseFromWeb))
+            }
+        }.resume()
     }
 
     private func validateAuthState() {
