@@ -157,9 +157,12 @@ Since we don't monitor the device's connection state you need to tell the SDK th
 contentPass.recoverFromError()
 ```
 
-### Couting an impression
-
-Counting an impression is as easy as calling the function `countImpression(completionHandler:)`. A user has to be authenticated and have an active subscription applicable to your scope for this to work.
+### Counting an impression
+`countImpression` method counts impressions for billing purposes. This method must be invoked whenever a user views a piece
+of content, independently of authentication state. If the current user is authenticated the impression will automatically
+be logged as paid ad-free impression to calculate the publisher compensation. As the total amount of impressions is required
+for billing as well, this method also counts sampled impressions of non-subscribers. Counting an impression is as easy as
+calling the function `countImpression(completionHandler:)`
 
 ```swift
 contentPass.countImpression { result in

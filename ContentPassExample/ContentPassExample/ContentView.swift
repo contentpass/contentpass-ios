@@ -60,6 +60,6 @@ struct ContentView: View {
             viewModel.countImpression()
         }
         .buttonStyle(.borderedProminent)
-        .opacity(viewModel.isError || !viewModel.isAuthenticated ? 0 : 1)
+        .opacity(viewModel.isError ? 0 : 1)
     }
 }
