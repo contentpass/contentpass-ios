@@ -1,7 +1,3 @@
-![contentpass](https://www.contentpass.de/img/logo.svg)
-
-
-
 ## Compatibility
 
 
