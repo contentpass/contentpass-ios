@@ -22,7 +22,7 @@ or
 * Add the following `dependency` to your `Package.swift`:
 ```swift
 dependencies: [
-    .package(url: "https://github.com/contentpass/contentpass-ios", .upToNextMajor(from: "2.2.1"))
+    .package(url: "https://github.com/contentpass/contentpass-ios", .upToNextMajor(from: "2.2.2"))
 ]
 ```
 
@@ -34,7 +34,7 @@ In both cases don't forget to add the sdk to your targets.
 
 With [CocoaPods](https://guides.cocoapods.org/using/getting-started.html), add the following line to your `Podfile`:
 ```ruby
-  pod 'ContentPass', '~> 2.2.1'
+  pod 'ContentPass', '~> 2.2.2'
 ```
 
 Then, run `pod install` via terminal.
