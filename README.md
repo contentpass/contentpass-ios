@@ -8,7 +8,7 @@
 ## Installation
 
 Since we use external dependencies for solved problems such as OAuth 2.0, we strongly recommend using a dependency manager.
-We currently support SPM as well as CocoaPods.
+Install the SDK with Swift Package Manager. CocoaPods is deprecated.
 
 
 
@@ -32,12 +32,13 @@ In both cases don't forget to add the sdk to your targets.
 
 ### CocoaPods
 
-With [CocoaPods](https://guides.cocoapods.org/using/getting-started.html), add the following line to your `Podfile`:
-```ruby
-  pod 'ContentPass', '~> 2.2.2'
-```
+CocoaPods is deprecated. New versions are not published to CocoaPods trunk. Use Swift Package Manager.
 
-Then, run `pod install` via terminal.
+Apps that still install via CocoaPods can depend on the git repository until they migrate:
+
+```ruby
+pod 'ContentPass', :git => 'https://github.com/contentpass/contentpass-ios.git', :tag => '2.2.2'
+```
 
 
 
