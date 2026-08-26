@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "ContentPass"
-  spec.version      = "2.2.1"
+  spec.version      = "2.2.2"
   spec.summary      = "Handles all authentication and validation with contentpass servers for you."
 
   spec.homepage     = "https://contentpass.de"
@@ -13,6 +13,6 @@ Pod::Spec.new do |spec|
   spec.source        = { :git => "https://github.com/contentpass/contentpass-ios.git", :tag => "#{spec.version}" }
   spec.source_files  = "Sources/**/*"
 
-  spec.dependency 'AppAuth', '1.7.5'
+  spec.dependency 'AppAuth', '~> 1.7.5'
   spec.dependency 'Strongbox', '0.6.1'
 end
